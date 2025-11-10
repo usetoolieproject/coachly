@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* Smooth scrolling for anchor links */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Theme background enforcement to avoid OS dark preference overriding */
+html, body {
+	background-color: #ffffff;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Floating animation for cards */
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+.animate-float {
+	animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-slow {
+	animation: float 6s ease-in-out infinite;
+}
+
+/* Fade in up animation for back to top button */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Slow pulse animation */
+@keyframes pulse-slow {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.animate-pulse-slow {
+	animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Slow color pulse animation for purple dot */
+@keyframes blink-purple {
+	0%, 100% {
+		background-color: rgb(147, 51, 234); /* purple-600 */
+	}
+	50% {
+		background-color: rgb(192, 132, 252); /* purple-400 */
+	}
+}
+
+.animate-blink-purple {
+	animation: blink-purple 2s ease-in-out infinite;
+}
+
+/* Custom shadow utilities */
+@layer utilities {
+	.shadow-3xl {
+		box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+	}
+}
+
+html.dark, html.dark body {
+	background-color: #0b1220; /* matches dark surface tone */
+}
+
+/*
+	Design tokens via CSS variables to support DRY theming across the app.
+	These variables define surface, border, and text colors for both modes.
+*/
+:root {
+	--surface: #ffffff;
+	--surface-2: #f3f4f6; /* gray-100 */
+	--border: #e5e7eb;   /* gray-200 */
+	--text: #0f172a;     /* slate-900 */
+	--text-muted: #64748b; /* slate-500 */
+}
+
+html.dark {
+	--surface: #0f172a;     /* slate-900 */
+	--surface-2: #1f2937;   /* gray-800 */
+	--border: #374151;      /* gray-700 */
+	--text: #e5e7eb;        /* gray-200 */
+	--text-muted: #9ca3af;  /* gray-400 */
+}
+
+/* Utility aliases so components can use semantic classes instead of raw colors */
+@layer utilities {
+	.bg-surface { background-color: var(--surface) !important; }
+	.bg-surface-2 { background-color: var(--surface-2) !important; }
+	.border-default { border-color: var(--border) !important; }
+	.text-primary { color: var(--text) !important; }
+	.text-muted { color: var(--text-muted) !important; }
+}
+
+/* Dark-mode bridges to existing Tailwind classes used widely in instructor views.
+	This lets us keep components unchanged while the toggle switches their look. */
+html.dark .bg-white { background-color: var(--surface) !important; }
+html.dark .bg-gray-100 { background-color: var(--surface-2) !important; }
+html.dark .border-gray-200 { border-color: var(--border) !important; }
+html.dark .text-gray-900, html.dark .text-slate-800 { color: var(--text) !important; }
+html.dark .text-gray-600, html.dark .text-slate-500 { color: var(--text-muted) !important; }
+
+/* Force mobile layout in preview mode */
+.mobile-preview-mode .grid {
+	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview-mode .grid[class*="grid-cols"] {
+	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview-mode .flex-row,
+.mobile-preview-mode .md\:flex-row {
+	flex-direction: column !important;
+}
+
+.mobile-preview-mode [class*="grid-cols-2"],
+.mobile-preview-mode [class*="grid-cols-3"] {
+	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+/* Ensure proper spacing in mobile preview */
+.mobile-preview-mode {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+.mobile-preview-mode > * {
+	max-width: 100%;
+	box-sizing: border-box;
+}

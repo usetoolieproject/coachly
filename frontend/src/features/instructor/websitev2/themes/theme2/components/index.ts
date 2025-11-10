@@ -1,0 +1,10 @@
+export { FitnessHero } from './FitnessHero';
+export { FitnessBanner } from './FitnessBanner';
+export { TrainerAbout } from './TrainerAbout';
+export { WorkoutPlans } from './WorkoutPlans';
+export { TransformationGallery } from './TransformationGallery';
+export { FitnessTestimonials } from './FitnessTestimonials';
+export { FitnessPricing } from './FitnessPricing';
+export { FitnessVideo } from './FitnessVideo';
+export { FitnessWhatsIncluded } from './FitnessWhatsIncluded';
+export { FitnessFooter } from './FitnessFooter';

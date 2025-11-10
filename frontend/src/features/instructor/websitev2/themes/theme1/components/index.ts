@@ -1,0 +1,17 @@
+export { Banner } from './Banner';
+export { Hero } from './Hero';
+export { About } from './About';
+export { CommunityCard } from './CommunityCard';
+export { Features } from './Features';
+export { Testimonials } from './Testimonials';
+export { Footer } from './Footer';
+export { Video } from './Video';
+export { OfferBox } from './OfferBox';
+export { WhatsIncluded } from './WhatsIncluded';
+export { Design } from './Design';
+export { Domain } from './Domain';
+export { CustomSection } from './CustomSection';
+export { JoinCommunity } from './JoinCommunity';
+export { AboutJoinCombined } from './AboutJoinCombined';
+export { PrivacySection } from './PrivacySection';
+export { TermsSection } from './TermsSection';
