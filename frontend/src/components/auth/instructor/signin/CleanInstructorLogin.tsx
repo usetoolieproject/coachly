@@ -142,11 +142,11 @@ export default function CleanInstructorLogin() {
                 disabled={isLoading}
                 className="w-full bg-blue-600 text-white py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Processing..." : "Continue to Payment"}
+                {isLoading ? "Creating Account..." : "Create Account"}
               </button>
 
               <p className="mt-4 text-xs sm:text-sm text-gray-600 text-center">
-                One-time payment • Lifetime access • All features included
+                Free access • All features included
               </p>
               
               <div className="text-center mt-4">
