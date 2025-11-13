@@ -36,41 +36,7 @@ CREATE INDEX IF NOT EXISTS idx_meetings_status ON meetings(status);
 CREATE INDEX IF NOT EXISTS idx_meeting_participants_meeting_id ON meeting_participants(meeting_id);
 CREATE INDEX IF NOT EXISTS idx_meeting_participants_user_id ON meeting_participants(user_id);
 
--- Enable Row Level Security (RLS)
-ALTER TABLE meetings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE meeting_participants ENABLE ROW LEVEL SECURITY;
-
--- RLS Policies for meetings table
--- Instructors can view and manage their own meetings
-CREATE POLICY "Instructors can view their own meetings" 
-  ON meetings FOR SELECT 
-  USING (instructor_id = auth.uid());
-
-CREATE POLICY "Instructors can create meetings" 
-  ON meetings FOR INSERT 
-  WITH CHECK (instructor_id = auth.uid());
-
-CREATE POLICY "Instructors can update their own meetings" 
-  ON meetings FOR UPDATE 
-  USING (instructor_id = auth.uid());
-
-CREATE POLICY "Instructors can delete their own meetings" 
-  ON meetings FOR DELETE 
-  USING (instructor_id = auth.uid());
-
--- RLS Policies for meeting_participants table
--- Users can view meetings they're invited to
-CREATE POLICY "Users can view their meeting participations" 
-  ON meeting_participants FOR SELECT 
-  USING (user_id = auth.uid());
-
--- Instructors can manage participants in their meetings
-CREATE POLICY "Instructors can manage participants in their meetings" 
-  ON meeting_participants FOR ALL 
-  USING (
-    EXISTS (
-      SELECT 1 FROM meetings 
-      WHERE meetings.id = meeting_participants.meeting_id 
-      AND meetings.instructor_id = auth.uid()
-    )
-  );
+-- Disable Row Level Security for now (backend uses service_role key)
+-- You can enable RLS later when implementing direct client access
+-- ALTER TABLE meetings ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE meeting_participants ENABLE ROW LEVEL SECURITY;
