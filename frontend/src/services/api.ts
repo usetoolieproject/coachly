@@ -1,13 +1,8 @@
 // Shared API utilities
 
 export function getApiBase(): string {
-  // For usecoachly.com domains, use Vercel proxy (same-domain requests)
-  if (typeof window !== 'undefined' && /usecoachly\.com$/.test(window.location.hostname.toLowerCase())) {
-    console.log('API: Using usecoachly.com proxy');
-    return '/api';
-  }
-  
-  // Check for environment variable for other domains
+  // Always use direct backend URL for API calls to avoid CORS issues with proxy
+  // Check for environment variable first
   if ((import.meta as any).env?.VITE_API_URL) {
     const raw = (import.meta as any).env.VITE_API_URL;
     const trimmed = String(raw).replace(/\/$/, '');
@@ -19,12 +14,12 @@ export function getApiBase(): string {
   // For local development, use localhost backend
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     console.log('API: Using localhost backend');
-  return 'http://localhost:8000/api';
+    return 'http://localhost:8000/api';
   }
   
-  // Default fallback - use deployed backend
+  // Default fallback - use deployed backend directly
   const fallback = 'https://coachly-backend.onrender.com/api';
-  console.log('API: Using fallback URL:', fallback);
+  console.log('API: Using direct backend URL:', fallback);
   return fallback;
 }
 
