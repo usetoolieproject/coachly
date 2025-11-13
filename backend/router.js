@@ -625,6 +625,18 @@ router.get('/website/public/:subdomain', getPublicWebsiteConfiguration);
 // Video Meeting routes (protected)
 router.use('/meetings', authenticateToken, meetingRoutes);
 
+// Contact Form route (public - no authentication required)
+import { sendContactFormEmail } from './controllers/contactController.js';
+
+// Rate limit for contact form to prevent spam (5 submissions per hour per IP)
+const contactFormLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: 'Too many contact form submissions. Please try again later.' }
+});
+
+router.post('/contact', contactFormLimiter, sendContactFormEmail);
+
 // Health check
 router.get('/health', (req, res) => {
   res.json({ 

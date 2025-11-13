@@ -17,6 +17,7 @@ import tenantMiddleware from './middleware/tenant.js'
 import validateTenant from './middleware/validateTenant.js'
 import canonicalHost from './middleware/canonicalHost.js'
 import { initializeStripe } from './controllers/billingController.js'
+import { initializeResend } from './controllers/contactController.js'
 import rateLimit from 'express-rate-limit'
 import { initializeVideoMeetingSocket } from './services/videoMeetingService.js'
 
@@ -31,6 +32,13 @@ try {
   console.log('Initialized Stripe')
 } catch (e) {
   console.error('Stripe initialization failed:', e)
+}
+
+// Initialize Resend for contact form emails
+try {
+  initializeResend();
+} catch (e) {
+  console.error('Resend initialization failed:', e)
 }
 
 const app = express()
