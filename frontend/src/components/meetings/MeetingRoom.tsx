@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { 
-  Mic, MicOff, Video as VideoIcon, VideoOff, MonitorUp, 
+  Mic, MicOff, Video as VideoIcon, VideoOff, MonitorUp, Monitor,
   PhoneOff, MessageSquare, Users, Settings,
   X, Send
 } from 'lucide-react';
@@ -35,6 +35,9 @@ const MeetingRoom: React.FC = () => {
   // Participants state
   const [participants, setParticipants] = useState<Map<string, any>>(new Map());
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
+  
+  // Screen sharing state
+  const [screenSharingUser, setScreenSharingUser] = useState<string | null>(null); // socketId or 'local'
 
   // UI state
   const [showChat, setShowChat] = useState(false);
@@ -256,11 +259,12 @@ const MeetingRoom: React.FC = () => {
     // Screen sharing
     socket.on('screen-share-started', (data: any) => {
       console.log('Screen share started:', data);
-      // TODO: Show indicator that user is sharing screen
+      setScreenSharingUser(data.socketId);
     });
 
     socket.on('screen-share-stopped', (data: any) => {
       console.log('Screen share stopped:', data);
+      setScreenSharingUser(null);
     });
 
     // Meeting ended by host
@@ -335,6 +339,7 @@ const MeetingRoom: React.FC = () => {
         }
         
         setIsScreenSharing(false);
+        setScreenSharingUser(null);
         console.log('✅ Screen share stopped, camera restored');
       } else {
         console.log('🖥️ Starting screen share...');
@@ -348,6 +353,7 @@ const MeetingRoom: React.FC = () => {
         }
         
         setIsScreenSharing(true);
+        setScreenSharingUser('local');
       }
     } catch (error: any) {
       console.error('❌ Screen share error:', error);
@@ -462,66 +468,180 @@ const MeetingRoom: React.FC = () => {
 
   const participantArray = Array.from(participants.values());
   const totalParticipants = participantArray.length + 1; // +1 for local user
+  const isSomeoneScreenSharing = screenSharingUser !== null;
 
   return (
     <div className="relative w-full h-screen bg-gray-900 overflow-hidden">
-      {/* Main Video Grid */}
-      <div className="absolute inset-0 p-4">
-        <div className={`grid gap-2 h-full w-full ${
-          totalParticipants === 1 ? 'grid-cols-1' :
-          totalParticipants === 2 ? 'grid-cols-2' :
-          totalParticipants <= 4 ? 'grid-cols-2 grid-rows-2' :
-          totalParticipants <= 6 ? 'grid-cols-3 grid-rows-2' :
-          'grid-cols-4 grid-rows-2'
-        }`}>
-          {/* Local Video */}
-          <div className="relative bg-gray-800 rounded-lg overflow-hidden">
-            <video
-              ref={localVideoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-2 left-2 bg-black/50 px-3 py-1 rounded-full text-white text-sm">
-              You {isHost && '(Host)'}
+      {isSomeoneScreenSharing ? (
+        /* Google Meet Style: Screen Share Layout */
+        <div className="absolute inset-0 flex">
+          {/* Main Screen Share Area */}
+          <div className="flex-1 p-4 flex items-center justify-center">
+            <div className="relative w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center">
+              {screenSharingUser === 'local' ? (
+                /* Local user is sharing */
+                <>
+                  <video
+                    ref={localVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute top-4 left-4 bg-red-600 px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2">
+                    <Monitor className="w-4 h-4" />
+                    You are presenting
+                  </div>
+                </>
+              ) : (
+                /* Remote user is sharing */
+                <>
+                  <video
+                    ref={(el) => {
+                      if (el && screenSharingUser) remoteVideosRef.current.set(screenSharingUser, el);
+                    }}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute top-4 left-4 bg-blue-600 px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-2">
+                    <Monitor className="w-4 h-4" />
+                    {participants.get(screenSharingUser)?.userName || 'Someone'} is presenting
+                  </div>
+                </>
+              )}
             </div>
-            {!videoEnabled && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-700">
-                <div className="text-white text-center">
-                  <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-2xl font-bold">
+          </div>
+
+          {/* Sidebar with Participant Thumbnails */}
+          <div className="w-80 p-4 flex flex-col gap-2 overflow-y-auto">
+            {/* Local Video Thumbnail */}
+            <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
+              {screenSharingUser === 'local' ? (
+                /* Show camera when sharing screen */
+                webrtcManagerRef.current?.localStream && (
+                  <video
+                    ref={(el) => {
+                      if (el && webrtcManagerRef.current?.localStream) {
+                        el.srcObject = webrtcManagerRef.current.localStream;
+                        el.play().catch(console.error);
+                      }
+                    }}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover"
+                  />
+                )
+              ) : (
+                /* Show local video normally */
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              )}
+              <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
+                You {isHost && '(Host)'}
+              </div>
+              {!videoEnabled && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-700">
+                  <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-bold text-white">
                       {user?.firstName?.[0]}{user?.lastName?.[0]}
                     </span>
                   </div>
-                  <p className="text-sm">Camera Off</p>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Remote Videos */}
-          {Array.from(remoteStreams.entries()).map(([socketId]) => {
-            const participant = participants.get(socketId);
-            return (
-              <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden">
-                <video
-                  ref={(el) => {
-                    if (el) remoteVideosRef.current.set(socketId, el);
-                  }}
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-2 left-2 bg-black/50 px-3 py-1 rounded-full text-white text-sm flex items-center gap-2">
-                  {participant?.userName || 'Unknown'}
-                  {!participant?.audio && <MicOff className="w-4 h-4" />}
+            {/* Remote Participant Thumbnails */}
+            {Array.from(remoteStreams.entries()).map(([socketId, stream]) => {
+              const participant = participants.get(socketId);
+              const isSharing = socketId === screenSharingUser;
+              
+              if (isSharing) return null; // Don't show thumbnail for the one sharing
+
+              return (
+                <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
+                  <video
+                    ref={(el) => {
+                      if (el) remoteVideosRef.current.set(socketId, el);
+                    }}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                    {participant?.userName || 'Unknown'}
+                    {!participant?.audio && <MicOff className="w-3 h-3" />}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Normal Grid Layout */
+        <div className="absolute inset-0 p-4">
+          <div className={`grid gap-2 h-full w-full ${
+            totalParticipants === 1 ? 'grid-cols-1' :
+            totalParticipants === 2 ? 'grid-cols-2' :
+            totalParticipants <= 4 ? 'grid-cols-2 grid-rows-2' :
+            totalParticipants <= 6 ? 'grid-cols-3 grid-rows-2' :
+            'grid-cols-4 grid-rows-2'
+          }`}>
+            {/* Local Video */}
+            <div className="relative bg-gray-800 rounded-lg overflow-hidden">
+              <video
+                ref={localVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-2 left-2 bg-black/50 px-3 py-1 rounded-full text-white text-sm">
+                You {isHost && '(Host)'}
+              </div>
+              {!videoEnabled && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-700">
+                  <div className="text-white text-center">
+                    <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-2xl font-bold">
+                        {user?.firstName?.[0]}{user?.lastName?.[0]}
+                      </span>
+                    </div>
+                    <p className="text-sm">Camera Off</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Remote Videos */}
+            {Array.from(remoteStreams.entries()).map(([socketId]) => {
+              const participant = participants.get(socketId);
+              return (
+                <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden">
+                  <video
+                    ref={(el) => {
+                      if (el) remoteVideosRef.current.set(socketId, el);
+                    }}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black/50 px-3 py-1 rounded-full text-white text-sm flex items-center gap-2">
+                    {participant?.userName || 'Unknown'}
+                    {!participant?.audio && <MicOff className="w-4 h-4" />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Controls Bar */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
