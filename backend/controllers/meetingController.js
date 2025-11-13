@@ -101,42 +101,52 @@ export async function createMeeting(req, res) {
 export async function listMeetings(req, res) {
   try {
     const userId = req.user.id;
+    const userRole = req.user.role;
     const { status } = req.query;
+
+    console.log('📋 Listing meetings for user:', userId, 'role:', userRole);
 
     const supabase = getSupabaseClient();
 
+    // Simplified query - get all meetings for this instructor
     let query = supabase
       .from('meetings')
-      .select(`
-        *,
-        meeting_participants!inner(user_id, user_type, role)
-      `)
-      .or(`instructor_id.eq.${userId},meeting_participants.user_id.eq.${userId}`)
-      .order('scheduled_at', { ascending: true });
+      .select('*');
+
+    // Filter by instructor ID for instructors
+    if (userRole === 'instructor') {
+      query = query.eq('instructor_id', userId);
+    }
 
     if (status) {
       query = query.eq('status', status);
     }
 
+    query = query.order('scheduled_at', { ascending: true });
+
     const { data: meetings, error } = await query;
 
     if (error) {
-      console.error('Error listing meetings:', error);
+      console.error('❌ Error listing meetings:', error);
       return res.status(500).json({ 
         success: false, 
-        message: 'Failed to list meetings' 
+        message: 'Failed to list meetings',
+        error: error.message 
       });
     }
 
+    console.log('✅ Found meetings:', meetings?.length || 0);
+
     res.json({ 
       success: true, 
-      meetings 
+      meetings: meetings || []
     });
   } catch (error) {
-    console.error('Error listing meetings:', error);
+    console.error('❌ Error listing meetings:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Failed to list meetings' 
+      message: 'Failed to list meetings',
+      error: error.message 
     });
   }
 }
