@@ -12,7 +12,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 import { createServer } from 'http'
-import router from './router-minimal.js'
+import router from './router.js'  // Changed from router-minimal.js to router.js for full API routes
 import tenantMiddleware from './middleware/tenant.js'
 import validateTenant from './middleware/validateTenant.js'
 import canonicalHost from './middleware/canonicalHost.js'
