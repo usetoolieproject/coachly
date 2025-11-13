@@ -192,6 +192,7 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
         if (url) {
           window.location.href = url;
         }
+        */
       } else {
         // INSTRUCTOR LOGIN - Use AuthContext
         await login(formData.email, formData.password, 'instructor');
