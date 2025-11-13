@@ -61,8 +61,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const authCheckAttempted = React.useRef(false);
 
   useEffect(() => {
+    // Prevent multiple auth checks
+    if (authCheckAttempted.current) {
+      return;
+    }
+    authCheckAttempted.current = true;
+    
     // Log cookies for debugging
     console.log('🍪 Current cookies:', document.cookie);
     checkAuthStatus();
@@ -148,14 +155,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('❌ Auth check failed:', error);
       
       // Check if this is an unknown tenant (404 error)
+      // Disabled redirect logic to prevent refresh loops on apex domain
       if ((error as any)?.status === 404 && typeof window !== 'undefined') {
         const currentHost = window.location.hostname.toLowerCase();
         const parts = currentHost.split('.');
         if (parts[0] === 'www') parts.shift();
         
-        // If we're on a subdomain and got 404, redirect to apex
-        if (parts.length > 2) {
+        // Only redirect subdomains, not apex domain
+        if (parts.length > 2 && !currentHost.includes('usecoachly.com')) {
           const apex = parts.slice(-2).join('.');
+          console.log('❌ Unknown subdomain, redirecting to apex:', apex);
           window.location.replace(`https://${apex}`);
           return;
         }
