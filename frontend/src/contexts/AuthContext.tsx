@@ -76,12 +76,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const checkAuthStatus = async () => {
+    console.log('🔐 Checking auth status...');
+    console.log('🍪 Current cookies:', document.cookie);
     
     // Check if this is a logout redirect - if so, clear user immediately
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('logout')) {
-        
+        console.log('🚪 Logout redirect detected, clearing auth');
         // Clear any remaining cookies and storage
         sessionStorage.clear();
         localStorage.clear();
@@ -90,60 +92,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.usecoachly.com;";
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=usecoachly.com;";
         
-        // Clear specific localStorage items that might cause issues
-        try {
-          localStorage.removeItem('payment_session_id');
-          localStorage.removeItem('theme');
-          localStorage.removeItem('tenantSlug');
-          localStorage.removeItem('user');
-          localStorage.removeItem('auth');
-        } catch (e) {
-        }
-        
         setUser(null);
         setLoading(false);
         return;
       }
     }
     
-    // Check if there are any session cookies before making API call
-    // Only skip API call if we're on production apex domain and no session cookie
-    // Always try API call on localhost/dev environments
-    if (typeof window !== 'undefined') {
-      const currentHost = window.location.hostname.toLowerCase();
-      
-      // Don't skip API call on localhost or development environments
-      if (!currentHost.includes('localhost') && !currentHost.includes('127.0.0.1')) {
-        const parts = currentHost.split('.');
-        if (parts[0] === 'www') parts.shift();
-        const isApex = parts.length <= 2;
-        
-        const hasSessionCookie = document.cookie.includes('session=');
-        if (isApex && !hasSessionCookie) {
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-      }
-    }
-    
-    
     try {
-      console.log('🔐 Checking auth status...');
-      console.log('🍪 Cookies before request:', document.cookie);
       const data = await apiFetch('/auth/me');
-      console.log('✅ Auth check response:', data);
-      console.log('✅ User from response:', data.user);
+      console.log('✅ Auth check success:', data?.user?.email);
       
-      // If no user in response, treat as unauthenticated
-      if (!data.user) {
-        console.warn('⚠️ No user in response, treating as unauthenticated');
-        throw new Error('No user data in response');
+      if (!data?.user) {
+        console.warn('⚠️ No user in /auth/me response');
+        throw new Error('No user data');
       }
       
       setUser(data.user);
       
-      // Store user in localStorage as backup
+      // Store user in localStorage for faster subsequent loads
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('user', JSON.stringify(data.user));
@@ -153,40 +119,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('❌ Auth check failed:', error);
+      setUser(null);
       
-      // Check if this is an unknown tenant (404 error)
-      // Disabled redirect logic to prevent refresh loops on apex domain
-      if ((error as any)?.status === 404 && typeof window !== 'undefined') {
-        const currentHost = window.location.hostname.toLowerCase();
-        const parts = currentHost.split('.');
-        if (parts[0] === 'www') parts.shift();
-        
-        // Only redirect subdomains, not apex domain
-        if (parts.length > 2 && !currentHost.includes('usecoachly.com')) {
-          const apex = parts.slice(-2).join('.');
-          console.log('❌ Unknown subdomain, redirecting to apex:', apex);
-          window.location.replace(`https://${apex}`);
-          return;
-        }
-      }
-      
-      // Try to restore user from localStorage if API call failed
+      // Clear invalid data
       if (typeof window !== 'undefined') {
         try {
-          const storedUser = localStorage.getItem('user');
-          if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            console.log('📦 Restored user from localStorage:', parsedUser.email);
-            setUser(parsedUser);
-            setLoading(false);
-            return;
-          }
-        } catch (e) {
-          console.warn('Failed to restore user from localStorage:', e);
-        }
+          localStorage.removeItem('user');
+        } catch (e) {}
       }
-      
-      setUser(null);
     } finally {
       setLoading(false);
     }
