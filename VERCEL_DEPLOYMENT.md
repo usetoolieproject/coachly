@@ -8,7 +8,7 @@
 - **Framework**: React + Vite
 
 ### Backend (Render)
-- **URL**: https://trainr-new-k.onrender.com
+- **URL**: https://coachly-backend.onrender.com
 - **API Endpoints**: All `/api/*` routes proxy to backend
 
 ## Deployment Steps
@@ -31,7 +31,7 @@ Add these environment variables in Vercel dashboard:
 ```env
 VITE_SUPABASE_URL=https://zjmjwqqzcvbqxooybvkd.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqbWp3cXF6Y3ZicXhvb3lidmtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNjgyMTQsImV4cCI6MjA3Mjc0NDIxNH0.fFs2vZr-yVMnfxqgMn0Qv2rVps9Y8MpkzKnGZlBm5m4
-VITE_API_URL=https://trainr-new-k.onrender.com
+VITE_API_URL=https://coachly-backend.onrender.com
 ```
 
 ### 3. Custom Domain Setup

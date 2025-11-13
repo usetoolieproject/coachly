@@ -23,7 +23,7 @@ export function getApiBase(): string {
   }
   
   // Default fallback - use deployed backend
-  const fallback = 'https://trainr-new-k.onrender.com/api';
+  const fallback = 'https://coachly-backend.onrender.com/api';
   console.log('API: Using fallback URL:', fallback);
   return fallback;
 }

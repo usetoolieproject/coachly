@@ -1,7 +1,7 @@
 # Backend Configuration for Render
 
 ## Current Backend URL
-`https://trainr-new-k.onrender.com`
+`https://coachly-backend.onrender.com`
 
 ## Required Environment Variables on Render
 
@@ -67,7 +67,7 @@ STRIPE_WEBHOOK_SECRET=<your-webhook-secret>
 
 Test if backend is working:
 ```bash
-curl https://trainr-new-k.onrender.com/api/health
+curl https://coachly-backend.onrender.com/api/health
 ```
 
 Expected response:
