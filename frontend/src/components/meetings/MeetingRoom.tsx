@@ -147,16 +147,21 @@ const MeetingRoom: React.FC = () => {
       console.log('📹 Video tracks:', localStream.getVideoTracks());
       console.log('📹 Audio tracks:', localStream.getAudioTracks());
 
-      // Display local video
+      // Display local video - wait a bit for DOM to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       if (localVideoRef.current) {
+        console.log('📹 Setting srcObject on localVideoRef');
         localVideoRef.current.srcObject = localStream;
         // Explicitly play the video
         try {
           await localVideoRef.current.play();
-          console.log('✅ Local video playing');
+          console.log('✅ Local video playing successfully');
         } catch (playError) {
           console.error('❌ Error playing local video:', playError);
         }
+      } else {
+        console.error('❌ localVideoRef.current is null!');
       }
 
       // Setup WebRTC callbacks
@@ -278,6 +283,32 @@ const MeetingRoom: React.FC = () => {
       setError(data.message);
     });
   };
+
+  /**
+   * Ensure local video stream is attached to video element
+   */
+  useEffect(() => {
+    const attachLocalVideo = async () => {
+      if (localVideoRef.current && webrtcManagerRef.current?.localStream) {
+        const currentStream = localVideoRef.current.srcObject as MediaStream;
+        const localStream = webrtcManagerRef.current.localStream;
+        
+        // Only update if stream is different or not set
+        if (currentStream !== localStream && !isScreenSharing) {
+          console.log('📹 Attaching local video stream to element');
+          localVideoRef.current.srcObject = localStream;
+          try {
+            await localVideoRef.current.play();
+            console.log('✅ Local video element playing');
+          } catch (error) {
+            console.error('❌ Error playing local video element:', error);
+          }
+        }
+      }
+    };
+
+    attachLocalVideo();
+  }, [localVideoRef.current, webrtcManagerRef.current?.localStream, isScreenSharing]);
 
   /**
    * Attach remote stream to video element
@@ -596,7 +627,16 @@ const MeetingRoom: React.FC = () => {
             {/* Local Video */}
             <div className="relative bg-gray-800 rounded-lg overflow-hidden">
               <video
-                ref={localVideoRef}
+                ref={(el) => {
+                  if (el) {
+                    localVideoRef.current = el;
+                    // Attach stream if available
+                    if (webrtcManagerRef.current?.localStream && !isScreenSharing) {
+                      el.srcObject = webrtcManagerRef.current.localStream;
+                      el.play().catch(err => console.error('Error playing local video:', err));
+                    }
+                  }
+                }}
                 autoPlay
                 playsInline
                 muted
