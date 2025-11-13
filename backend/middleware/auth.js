@@ -114,7 +114,7 @@ export const checkInstructorPremium = async (req, res, next) => {
     return next();
   }
 
-  // If no active subscription and not a Connect endpoint, check premium_ends field (backwards compatibility)
+  // If no active subscription, check premium_ends field (for lifetime/one-time payment users)
   if (!instructor.premium_ends) {
     return res.status(403).json({ 
       error: 'Premium access required',

@@ -129,7 +129,7 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
           return;
         }
 
-        // INSTRUCTOR SIGNUP - Create account directly (payment temporarily disabled)
+        // INSTRUCTOR SIGNUP - Validate data and create checkout session
         const signupResponse = await apiFetch('/auth/signup/instructor', {
           method: 'POST',
           headers: {
@@ -145,18 +145,8 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
           }),
         });
 
-        console.log('✅ Instructor account created:', signupResponse);
+        console.log('✅ Signup data validated:', signupResponse);
 
-        // Auto-login after signup
-        await login(formData.email, formData.password, 'instructor');
-        
-        // Navigate to instructor dashboard
-        window.location.href = '/coach/dashboard';
-        return;
-
-        // PAYMENT FLOW DISABLED TEMPORARILY
-        // Uncomment below when payment is needed:
-        /*
         // Store complete signup data in localStorage for after payment
         const pendingSignupData = {
           firstName: formData.firstName,
@@ -192,7 +182,6 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
         if (url) {
           window.location.href = url;
         }
-        */
       } else {
         // INSTRUCTOR LOGIN - Use AuthContext
         await login(formData.email, formData.password, 'instructor');
