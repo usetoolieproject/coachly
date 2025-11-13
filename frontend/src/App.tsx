@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TenantProvider } from "./contexts/TenantContext";
-import { HostRedirectHandler } from "./components/HostRedirectHandler";
+// import { HostRedirectHandler } from "./components/HostRedirectHandler";
 import { RootRouteHandler } from "./components/RootRouteHandler";
 import { LoginRouteHandler } from "./components/LoginRouteHandler";
 // Import shared components
@@ -61,7 +61,8 @@ function App() {
     <ThemeProvider>
       <TenantProvider>
       <AuthProvider>
-        <HostRedirectHandler />
+        {/* Temporarily disabled to prevent refresh loops */}
+        {/* <HostRedirectHandler /> */}
         <Router>
         <div className="min-h-screen">
           <OfflineIndicator />

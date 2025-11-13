@@ -250,33 +250,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       
       // Handle post-login redirects
-      if (data?.user?.role === 'instructor' && data?.user?.instructor?.subdomain) {
-        const subdomain = data.user.instructor.subdomain;
-        const currentHost = window.location.hostname.toLowerCase();
-        const parts = currentHost.split('.');
-        if (parts[0] === 'www') parts.shift();
-        const apex = parts.slice(-2).join('.');
-        
-        // Always redirect to user's correct subdomain
-        window.location.replace(`https://${subdomain}.${apex}/coach/dashboard`);
-      } else if (data?.user?.role === 'student') {
-        
-        // Check if backend provided redirectTo
-        if (data?.redirectTo) {
-          const currentHost = window.location.hostname.toLowerCase();
-          const parts = currentHost.split('.');
-          if (parts[0] === 'www') parts.shift();
-          const apex = parts.slice(-2).join('.');
-          const targetSubdomain = data.redirectTo;
-          
-          // Redirect to correct instructor subdomain
-          window.location.replace(`https://${targetSubdomain}.${apex}/student/dashboard`);
-          return;
-        }
-        
-        // Already on correct subdomain, just navigate
-        window.location.replace('/student/dashboard');
-      }
+      // Disabled automatic redirects to prevent loops - let React Router handle navigation
+      console.log('✅ Login successful, user role:', data?.user?.role);
+      // User is now logged in, React Router will handle navigation based on role
     } catch (error: any) {
       // Handle WRONG_TENANT error from exception
       if (error.message && error.message.includes('WRONG_TENANT')) {
