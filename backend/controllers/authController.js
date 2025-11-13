@@ -317,11 +317,10 @@ export const login = async (req, res) => {
       query = query.eq('role', role);
     }
 
-    const { data: user, error } = await query
-      .select('*, instructors(*), students(*)')
-      .single();
+    const { data: user, error } = await query.single();
 
     if (error || !user) {
+      console.error('Login error - user lookup failed:', error);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
