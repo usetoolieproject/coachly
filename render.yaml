@@ -1,0 +1,28 @@
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "coachly-backend",
+      "env": "node",
+      "region": "oregon",
+      "plan": "free",
+      "rootDir": "backend",
+      "buildCommand": "npm install",
+      "startCommand": "node index.js",
+      "envVars": [
+        {
+          "key": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "key": "PORT",
+          "value": "8000"
+        },
+        {
+          "key": "DB_TYPE",
+          "value": "supabase"
+        }
+      ]
+    }
+  ]
+}
