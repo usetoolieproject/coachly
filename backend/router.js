@@ -543,14 +543,17 @@ router.use((error, req, res, next) => {
   next(error);
 });
 
-// Premium status endpoint for students to check their instructor's premium
+// Premium status endpoint for instructors to check their premium status
 router.get('/instructor/premium-status', authenticateToken, requireRole(['instructor']), async (req, res) => {
   try {
+    console.log('📊 Premium status check for user:', req.user.email);
     const instructor = req.user.instructors?.[0];
     if (!instructor) {
+      console.error('❌ No instructor profile found for user:', req.user.id);
       return res.status(404).json({ error: 'Instructor not found' });
     }
 
+    console.log('✅ Instructor found:', instructor.id);
     const supabase = getSupabaseClient();
     
     // First check subscriptions table for active subscription
@@ -563,9 +566,11 @@ router.get('/instructor/premium-status', authenticateToken, requireRole(['instru
       .limit(1);
     
     if (subscriptionError) {
+      console.error('⚠️ Subscription query error:', subscriptionError.message);
     }
     
     const subscription = subscriptions?.[0] || null;
+    console.log('💳 Subscription status:', subscription ? 'Active' : 'None');
     
     if (subscription) {
       // Has active subscription
@@ -589,17 +594,21 @@ router.get('/instructor/premium-status', authenticateToken, requireRole(['instru
         });
       }
     } else {
-      // No subscription - fall back to instructors table (trial)
+      // No subscription - fall back to instructors table (one-time payment/lifetime access)
+      const isActive = instructor.premium_ends ? new Date() <= new Date(instructor.premium_ends) : false;
+      console.log('📅 Fallback to premium_ends:', instructor.premium_ends, '| Active:', isActive);
+      
       res.json({
         premium_starts: instructor.premium_starts,
         premium_ends: instructor.premium_ends,
-        isActive: instructor.premium_ends ? new Date() <= new Date(instructor.premium_ends) : false,
-        isTrial: true,
+        isActive: isActive,
+        isTrial: false, // One-time payment, not a trial
         isCancelled: false
       });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('❌ Premium status error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
 
