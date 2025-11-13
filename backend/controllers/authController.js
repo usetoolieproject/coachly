@@ -303,6 +303,8 @@ export const login = async (req, res) => {
     const { email, password, role } = req.body;
     const tenantSlug = req.tenant?.slug || null;
 
+    console.log('🔐 Login attempt:', { email, role, tenantSlug });
+
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
@@ -319,14 +321,24 @@ export const login = async (req, res) => {
 
     const { data: user, error } = await query.single();
 
+    console.log('👤 User lookup result:', { 
+      found: !!user, 
+      error: error?.message,
+      userRole: user?.role,
+      hasPassword: !!user?.password_hash 
+    });
+
     if (error || !user) {
-      console.error('Login error - user lookup failed:', error);
+      console.error('❌ Login error - user lookup failed:', error);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check password
     const validPassword = await bcrypt.compare(password, user.password_hash);
+    console.log('🔑 Password validation:', validPassword);
+    
     if (!validPassword) {
+      console.error('❌ Login error - invalid password');
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
