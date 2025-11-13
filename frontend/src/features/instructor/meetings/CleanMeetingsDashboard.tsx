@@ -14,7 +14,8 @@ import {
   Users,
   X,
   Copy,
-  Check
+  Check,
+  Trash2
 } from 'lucide-react';
 import { apiFetch, getAuthHeaders } from '../../../services/api';
 import { useTheme } from '../../../contexts/ThemeContext';
@@ -65,6 +66,27 @@ const CleanMeetingsDashboard: React.FC = () => {
       console.error('Error fetching meetings:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteMeeting = async (meetingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this meeting? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await apiFetch(`/meetings/${meetingId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      
+      // Remove meeting from local state
+      setMeetings(meetings.filter(m => m.id !== meetingId));
+    } catch (err) {
+      console.error('Error deleting meeting:', err);
+      alert('Failed to delete meeting. Please try again.');
     }
   };
 
@@ -391,23 +413,37 @@ const CleanMeetingsDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!isExpired) {
-                            navigate(`/meeting/${meeting.id}`);
-                          }
-                        }}
-                        disabled={isExpired}
-                        className={`px-6 py-2 font-semibold rounded-lg transition ${
-                          isExpired
-                            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
-                        title={isExpired ? 'This meeting has expired' : 'Join meeting'}
-                      >
-                        {isExpired ? 'Expired' : 'Join'}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => deleteMeeting(meeting.id, e)}
+                          className={`p-2 rounded-lg transition ${
+                            isDarkMode
+                              ? 'hover:bg-red-900/30 text-red-400 hover:text-red-300'
+                              : 'hover:bg-red-50 text-red-600 hover:text-red-700'
+                          }`}
+                          title="Delete meeting"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isExpired) {
+                              navigate(`/meeting/${meeting.id}`);
+                            }
+                          }}
+                          disabled={isExpired}
+                          className={`px-6 py-2 font-semibold rounded-lg transition ${
+                            isExpired
+                              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
+                          title={isExpired ? 'This meeting has expired' : 'Join meeting'}
+                        >
+                          {isExpired ? 'Expired' : 'Join'}
+                        </button>
+                      </div>
                     </div>
                   );
                 })}

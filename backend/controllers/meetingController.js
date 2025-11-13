@@ -344,6 +344,71 @@ export async function cancelMeeting(req, res) {
 }
 
 /**
+ * Delete meeting permanently
+ * DELETE /api/meetings/:id/delete
+ */
+export async function deleteMeeting(req, res) {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    console.log('🗑️ Deleting meeting:', id, 'by user:', userId);
+
+    const supabase = getSupabaseClient();
+
+    // Verify user is the creator
+    const { data: meeting, error: fetchError } = await supabase
+      .from('meetings')
+      .select('instructor_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !meeting) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Meeting not found' 
+      });
+    }
+
+    if (meeting.instructor_id !== userId) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Only meeting creator can delete' 
+      });
+    }
+
+    // Delete meeting (participants will be cascade deleted due to foreign key)
+    const { error: deleteError } = await supabase
+      .from('meetings')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) {
+      console.error('❌ Error deleting meeting:', deleteError);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to delete meeting',
+        error: deleteError.message
+      });
+    }
+
+    console.log('✅ Meeting deleted successfully');
+
+    res.json({ 
+      success: true, 
+      message: 'Meeting deleted successfully' 
+    });
+  } catch (error) {
+    console.error('❌ Error deleting meeting:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete meeting',
+      error: error.message
+    });
+  }
+}
+
+/**
  * Add participant to meeting
  * POST /api/meetings/:id/participants
  */

@@ -12,6 +12,7 @@ import {
   getMeeting,
   updateMeeting,
   cancelMeeting,
+  deleteMeeting,
   addParticipant,
   getMeetingStats
 } from '../controllers/meetingControllerUnified.js';
@@ -33,8 +34,11 @@ router.get('/:id', getMeeting);
 // Update meeting
 router.patch('/:id', updateMeeting);
 
-// Cancel meeting
-router.delete('/:id', cancelMeeting);
+// Cancel meeting (sets status to cancelled)
+router.patch('/:id/cancel', cancelMeeting);
+
+// Delete meeting permanently
+router.delete('/:id', deleteMeeting);
 
 // Add participant to meeting
 router.post('/:id/participants', addParticipant);

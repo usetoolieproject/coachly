@@ -24,6 +24,7 @@ export const listMeetings = (req, res) => controller.listMeetings(req, res);
 export const getMeeting = (req, res) => controller.getMeeting(req, res);
 export const updateMeeting = (req, res) => controller.updateMeeting(req, res);
 export const cancelMeeting = (req, res) => controller.cancelMeeting(req, res);
+export const deleteMeeting = (req, res) => controller.deleteMeeting(req, res);
 export const addParticipant = (req, res) => controller.addParticipant(req, res);
 export const getMeetingStats = (req, res) => controller.getMeetingStats(req, res);
 
