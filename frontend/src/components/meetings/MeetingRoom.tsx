@@ -140,9 +140,20 @@ const MeetingRoom: React.FC = () => {
         video: true
       });
 
+      console.log('📹 Local stream obtained:', localStream);
+      console.log('📹 Video tracks:', localStream.getVideoTracks());
+      console.log('📹 Audio tracks:', localStream.getAudioTracks());
+
       // Display local video
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream;
+        // Explicitly play the video
+        try {
+          await localVideoRef.current.play();
+          console.log('✅ Local video playing');
+        } catch (playError) {
+          console.error('❌ Error playing local video:', playError);
+        }
       }
 
       // Setup WebRTC callbacks
@@ -268,10 +279,18 @@ const MeetingRoom: React.FC = () => {
    * Attach remote stream to video element
    */
   useEffect(() => {
-    remoteStreams.forEach((stream, socketId) => {
+    remoteStreams.forEach(async (stream, socketId) => {
       const videoElement = remoteVideosRef.current.get(socketId);
       if (videoElement && videoElement.srcObject !== stream) {
+        console.log('📺 Setting remote stream for:', socketId);
         videoElement.srcObject = stream;
+        // Explicitly play remote video
+        try {
+          await videoElement.play();
+          console.log('✅ Remote video playing for:', socketId);
+        } catch (playError) {
+          console.error('❌ Error playing remote video:', playError);
+        }
       }
     });
   }, [remoteStreams]);
@@ -306,14 +325,32 @@ const MeetingRoom: React.FC = () => {
 
     try {
       if (isScreenSharing) {
+        console.log('🖥️ Stopping screen share...');
         await webrtcManagerRef.current.stopScreenShare();
+        
+        // Restore camera view
+        if (localVideoRef.current && webrtcManagerRef.current.localStream) {
+          localVideoRef.current.srcObject = webrtcManagerRef.current.localStream;
+          await localVideoRef.current.play();
+        }
+        
         setIsScreenSharing(false);
+        console.log('✅ Screen share stopped, camera restored');
       } else {
-        await webrtcManagerRef.current.startScreenShare();
+        console.log('🖥️ Starting screen share...');
+        const screenStream = await webrtcManagerRef.current.startScreenShare();
+        console.log('✅ Screen share started:', screenStream);
+        
+        // Update local video to show screen share
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = screenStream;
+          await localVideoRef.current.play();
+        }
+        
         setIsScreenSharing(true);
       }
     } catch (error: any) {
-      console.error('Screen share error:', error);
+      console.error('❌ Screen share error:', error);
       alert('Failed to share screen: ' + error.message);
     }
   };
