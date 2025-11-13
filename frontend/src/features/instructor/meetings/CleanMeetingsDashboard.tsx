@@ -472,13 +472,20 @@ const CreateMeetingModal: React.FC<CreateMeetingModalProps> = ({ onClose, onSucc
       setLoading(true);
       setError(null);
 
+      // Convert datetime-local to ISO string with proper timezone
+      const scheduledDate = new Date(formData.scheduled_at);
+      const scheduledAtISO = scheduledDate.toISOString();
+
       const response = await apiFetch('/meetings', {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          scheduled_at: scheduledAtISO
+        }),
       });
 
       if (response.success) {
