@@ -305,9 +305,46 @@ const getPublicWebsiteConfiguration = async (req, res) => {
   }
 };
 
+// GET /api/website/loadthemeid/:id
+const loadThemeById = async (req, res) => {
+  try {
+    const themeId = req.params.id;
+    // Return a default theme structure
+    res.json({
+      id: themeId,
+      name: 'Default Theme',
+      config: {},
+      success: true
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// GET /api/website/loadthemedefault/progression
+const loadThemeDefault = async (req, res) => {
+  try {
+    const defaultType = req.params.type || 'progression';
+    // Return a default theme
+    res.json({
+      themeId: 'default-' + defaultType,
+      addedSections: [],
+      sectionData: {},
+      selectedPageType: defaultType,
+      isMobileView: false,
+      isPublished: false,
+      success: true
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 export {
   saveWebsiteConfiguration,
   loadWebsiteConfiguration,
   deleteWebsiteConfiguration,
-  getPublicWebsiteConfiguration
+  getPublicWebsiteConfiguration,
+  loadThemeById,
+  loadThemeDefault
 };

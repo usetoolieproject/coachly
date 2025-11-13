@@ -124,7 +124,9 @@ import {
   saveWebsiteConfiguration, 
   loadWebsiteConfiguration, 
   deleteWebsiteConfiguration,
-  getPublicWebsiteConfiguration
+  getPublicWebsiteConfiguration,
+  loadThemeById,
+  loadThemeDefault
 } from './controllers/websiteController.js';
 import {
   listPromoCodes,
@@ -605,6 +607,8 @@ router.get('/instructor/premium-status', authenticateToken, requireRole(['instru
 router.post('/website/save', authenticateToken, requireRole(['instructor']), checkInstructorPremium, saveWebsiteConfiguration);
 router.get('/website/load', authenticateToken, requireRole(['instructor']), checkInstructorPremium, loadWebsiteConfiguration);
 router.delete('/website/delete', authenticateToken, requireRole(['instructor']), checkInstructorPremium, deleteWebsiteConfiguration);
+router.get('/website/loadthemeid/:id', authenticateToken, loadThemeById);
+router.get('/website/loadthemedefault/:type', authenticateToken, loadThemeDefault);
 
 // Public Website Configuration route (no authentication required)
 router.get('/website/public/:subdomain', getPublicWebsiteConfiguration);
