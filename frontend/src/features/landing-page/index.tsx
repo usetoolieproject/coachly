@@ -42,11 +42,13 @@ const LandingPage = () => {
       return;
     }
     
-    // Check if this is a logout - don't redirect
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('logout')) {
-      // Stay on landing page after logout
-      return;
+    // Check if user just logged out - don't redirect back to dashboard
+    if (typeof window !== 'undefined') {
+      const justLoggedOut = sessionStorage.getItem('justLoggedOut');
+      if (justLoggedOut === 'true') {
+        // Stay on landing page after logout
+        return;
+      }
     }
     
     if (user) {

@@ -84,9 +84,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('logout')) {
         console.log('🚪 Logout redirect detected, clearing auth');
-        // Clear any remaining cookies and storage
+        
+        // Set a flag to indicate user just logged out (before clearing sessionStorage)
+        try {
+          sessionStorage.setItem('justLoggedOut', 'true');
+        } catch (e) {}
+        
+        // Clear any remaining cookies and storage (except the flag we just set)
+        const justLoggedOut = sessionStorage.getItem('justLoggedOut');
         sessionStorage.clear();
         localStorage.clear();
+        if (justLoggedOut) {
+          sessionStorage.setItem('justLoggedOut', 'true');
+        }
         
         // Clear cookies for .usecoachly.com domain
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.usecoachly.com;";
@@ -98,6 +108,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Remove the logout parameter from URL without triggering a reload
         window.history.replaceState({}, '', window.location.pathname);
+        return;
+      }
+      
+      // Check if user just logged out - skip auth check
+      const justLoggedOut = sessionStorage.getItem('justLoggedOut');
+      if (justLoggedOut === 'true') {
+        console.log('🚪 Just logged out, skipping auth check');
+        sessionStorage.removeItem('justLoggedOut');
+        setUser(null);
+        setLoading(false);
         return;
       }
     }
