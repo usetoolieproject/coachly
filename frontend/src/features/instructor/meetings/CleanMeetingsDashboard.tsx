@@ -483,7 +483,9 @@ const CleanMeetingsDashboard: React.FC = () => {
           onClose={() => setShowJoinModal(false)}
         />
       )}
-    </div>
+        </div>
+      </div>
+    </ProtectProFeature>
   );
 };
 
@@ -707,9 +709,8 @@ const JoinMeetingModal: React.FC<JoinMeetingModalProps> = ({ onClose }) => {
             </button>
           </div>
         </form>
-        </div>
       </div>
-    </ProtectProFeature>
+    </div>
   );
 };
 
