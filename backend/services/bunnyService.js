@@ -50,6 +50,10 @@ class BunnyService {
       // Validate Bunny CDN configuration
       this.validateConfig();
 
+      console.log('🔑 Bunny API Key present:', !!BUNNY_API_KEY);
+      console.log('📚 Bunny Library ID:', BUNNY_LIBRARY_ID);
+      console.log('🌐 Bunny CDN Hostname:', BUNNY_CDN_HOSTNAME);
+
       // Check storage limit before upload
       const currentStorage = await this.getInstructorStorageUsage(instructorId);
       const videoSize = videoBuffer.length;
@@ -58,6 +62,8 @@ class BunnyService {
         const remainingGB = ((STORAGE_LIMIT_BYTES - currentStorage) / (1024 * 1024 * 1024)).toFixed(2);
         throw new Error(`Storage limit exceeded. You have ${remainingGB} GB remaining.`);
       }
+
+      console.log('📤 Creating video in Bunny Stream library...');
 
       // Create video in Bunny Stream library
       const createResponse = await axios.post(
@@ -68,7 +74,8 @@ class BunnyService {
         {
           headers: {
             'AccessKey': BUNNY_API_KEY,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'accept': 'application/json'
           }
         }
       );
@@ -148,7 +155,8 @@ class BunnyService {
         `https://video.bunnycdn.com/library/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
         {
           headers: {
-            'AccessKey': BUNNY_API_KEY
+            'AccessKey': BUNNY_API_KEY,
+            'accept': 'application/json'
           }
         }
       );
@@ -156,6 +164,7 @@ class BunnyService {
       return response.data;
     } catch (error) {
       console.error('❌ Error getting video details:', error.message);
+      console.error('❌ Error response:', error.response?.data);
       throw error;
     }
   }

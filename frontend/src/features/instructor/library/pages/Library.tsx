@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Video, Search, Grid, List, Filter, Upload, Trash2, Play, Clock, FileVideo, Loader2, AlertCircle } from 'lucide-react';
 import { videoLibraryService } from '../../../../services/videoLibraryService';
+import { HlsVideoPlayer } from '../../../../components/shared/HlsVideoPlayer';
 
 interface VideoItem {
   id: string;
@@ -31,6 +32,7 @@ const Library = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState<VideoItem | null>(null);
 
   // Fetch videos and storage stats on mount
   useEffect(() => {
@@ -45,6 +47,8 @@ const Library = () => {
         videoLibraryService.getVideos(),
         videoLibraryService.getStorageStats()
       ]);
+      console.log('📹 Fetched videos:', videosData);
+      console.log('📊 Storage stats:', statsData);
       setVideos(videosData);
       setStorageStats(statsData);
     } catch (err: any) {
@@ -288,7 +292,10 @@ const Library = () => {
                     className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
                   >
                     {/* Thumbnail */}
-                    <div className="relative group cursor-pointer">
+                    <div 
+                      className="relative group cursor-pointer"
+                      onClick={() => video.status === 'ready' && setPlayingVideo(video)}
+                    >
                       <img
                         src={video.thumbnail_url || 'https://via.placeholder.com/320x180?text=Processing'}
                         alt={video.title}
@@ -377,7 +384,10 @@ const Library = () => {
                           />
                         </td>
                         <td className="px-4 py-4">
-                          <div className="flex items-center gap-3">
+                          <div 
+                            className="flex items-center gap-3 cursor-pointer hover:opacity-80"
+                            onClick={() => video.status === 'ready' && setPlayingVideo(video)}
+                          >
                             <div className="relative">
                               <img
                                 src={video.thumbnail_url || 'https://via.placeholder.com/96x56?text=Processing'}
@@ -390,6 +400,11 @@ const Library = () => {
                               {video.status === 'processing' && (
                                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
                                   <Loader2 className="w-4 h-4 text-white animate-spin" />
+                                </div>
+                              )}
+                              {video.status === 'ready' && (
+                                <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 flex items-center justify-center rounded transition-all">
+                                  <Play className="w-6 h-6 text-white opacity-0 hover:opacity-100 transition-all" />
                                 </div>
                               )}
                             </div>
@@ -427,6 +442,48 @@ const Library = () => {
               </div>
             )}
           </>
+        )}
+
+        {/* Video Player Modal */}
+        {playingVideo && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+            onClick={() => setPlayingVideo(null)}
+          >
+            <div 
+              className="relative w-full max-w-6xl bg-black rounded-lg overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setPlayingVideo(null)}
+                className="absolute top-4 right-4 z-10 w-10 h-10 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full flex items-center justify-center text-white transition-all"
+              >
+                <span className="text-2xl">&times;</span>
+              </button>
+
+              {/* Video Player */}
+              <div className="aspect-video bg-black">
+                <HlsVideoPlayer
+                  src={playingVideo.video_url}
+                  autoPlay
+                  controls
+                  className="w-full h-full"
+                />
+              </div>
+
+              {/* Video Info */}
+              <div className="p-4 bg-gray-900 text-white">
+                <h3 className="text-lg font-semibold mb-2">{playingVideo.title}</h3>
+                <div className="flex items-center gap-4 text-sm text-gray-400">
+                  <span>{videoLibraryService.formatFileSize(playingVideo.file_size)}</span>
+                  <span>{videoLibraryService.formatDuration(playingVideo.duration)}</span>
+                  <span>{new Date(playingVideo.upload_date).toLocaleDateString()}</span>
+                  <span>{playingVideo.views} views</span>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
