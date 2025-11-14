@@ -10,8 +10,12 @@ import bunnyService from '../services/bunnyService.js';
  */
 export const uploadVideo = async (req, res) => {
   try {
-    const instructorId = req.user.instructor.id;
+    const instructorId = req.user?.instructor?.id;
     
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
+
     if (!req.file) {
       return res.status(400).json({ error: 'No video file provided' });
     }
@@ -20,7 +24,7 @@ export const uploadVideo = async (req, res) => {
     const fileName = req.file.originalname;
     const title = req.body.title || fileName.replace(/\.[^/.]+$/, ''); // Remove extension
 
-    console.log(`📤 Uploading video: ${fileName} (${(videoBuffer.length / (1024 * 1024)).toFixed(2)} MB)`);
+    console.log(`📤 Uploading video: ${fileName} (${(videoBuffer.length / (1024 * 1024)).toFixed(2)} MB) for instructor: ${instructorId}`);
 
     // Upload to Bunny CDN
     const video = await bunnyService.uploadVideo(videoBuffer, fileName, instructorId, title);
@@ -33,7 +37,17 @@ export const uploadVideo = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Upload error:', error.message);
+    console.error('Error stack:', error.stack);
     
+    // Check if Bunny CDN is not configured
+    if (error.message.includes('not configured') || error.message.includes('Missing environment variables')) {
+      return res.status(503).json({ 
+        error: 'Video upload service is not configured. Please contact support.',
+        details: error.message,
+        code: 'SERVICE_NOT_CONFIGURED'
+      });
+    }
+
     if (error.message.includes('Storage limit exceeded')) {
       return res.status(413).json({ 
         error: error.message,
@@ -53,7 +67,13 @@ export const uploadVideo = async (req, res) => {
  */
 export const getVideos = async (req, res) => {
   try {
-    const instructorId = req.user.instructor.id;
+    const instructorId = req.user?.instructor?.id;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
+
+    console.log(`📹 Fetching videos for instructor: ${instructorId}`);
 
     const videos = await bunnyService.getInstructorVideos(instructorId);
 
@@ -64,6 +84,7 @@ export const getVideos = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error fetching videos:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Failed to fetch videos',
       details: error.message 
@@ -76,7 +97,13 @@ export const getVideos = async (req, res) => {
  */
 export const getStorageStats = async (req, res) => {
   try {
-    const instructorId = req.user.instructor.id;
+    const instructorId = req.user?.instructor?.id;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
+
+    console.log(`📊 Fetching storage stats for instructor: ${instructorId}`);
 
     const stats = await bunnyService.getStorageStats(instructorId);
 
@@ -87,6 +114,7 @@ export const getStorageStats = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error fetching storage stats:', error.message);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Failed to fetch storage stats',
       details: error.message 

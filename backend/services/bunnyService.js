@@ -18,6 +18,26 @@ const STORAGE_LIMIT_BYTES = 100 * 1024 * 1024 * 1024; // 100 GB
 
 class BunnyService {
   /**
+   * Check if Bunny CDN is configured
+   */
+  isConfigured() {
+    return !!(BUNNY_API_KEY && BUNNY_LIBRARY_ID && BUNNY_CDN_HOSTNAME);
+  }
+
+  /**
+   * Validate Bunny CDN configuration
+   */
+  validateConfig() {
+    const missing = [];
+    if (!BUNNY_API_KEY) missing.push('BUNNY_API_KEY');
+    if (!BUNNY_LIBRARY_ID) missing.push('BUNNY_LIBRARY_ID');
+    if (!BUNNY_CDN_HOSTNAME) missing.push('BUNNY_CDN_HOSTNAME');
+
+    if (missing.length > 0) {
+      throw new Error(`Bunny CDN not configured. Missing environment variables: ${missing.join(', ')}. Please configure these in your Render dashboard.`);
+    }
+  }
+  /**
    * Upload video to Bunny Stream
    * @param {Buffer} videoBuffer - Video file buffer
    * @param {string} fileName - Original filename
@@ -27,6 +47,9 @@ class BunnyService {
    */
   async uploadVideo(videoBuffer, fileName, instructorId, title) {
     try {
+      // Validate Bunny CDN configuration
+      this.validateConfig();
+
       // Check storage limit before upload
       const currentStorage = await this.getInstructorStorageUsage(instructorId);
       const videoSize = videoBuffer.length;
