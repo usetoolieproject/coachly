@@ -242,9 +242,6 @@ export const createSubscriptionCheckout = async (req, res) => {
         error: 'Payment system not configured. Please contact support.' 
       });
     }
-
-    const { planId: planIdFromBody } = req.body;
-    const planId = planIdFromBody;
     
     if (!planId) {
       return res.status(400).json({ error: 'Plan ID is required' });
