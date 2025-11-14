@@ -2,19 +2,22 @@ import { Check } from 'lucide-react';
 
 const Comparison = () => {
   const competitorTools = [
-    { brand: "Skool", category: "Community", cost: 99 },
-    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127 },
-    { brand: "Kajabi", category: "Courses", cost: 149 },
-    { brand: "Loom", category: "Video Messages", cost: 12 },
-    { brand: "Zoom", category: "Live Coaching", cost: 30 },
+    { brand: "Skool", category: "Community", cost: 99, logo: "/logo-skool.svg" },
+    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, logo: "/logo-clickfunnels.svg" },
+    { brand: "Kajabi", category: "Courses", cost: 149, logo: "/logo-kajabi.svg" },
+    { brand: "Loom", category: "Screen Recording", cost: 12, logo: "/logo-loom.svg" },
+    { brand: "Zoom", category: "Live Coaching", cost: 30, logo: "/logo-zoom.svg" },
+    { brand: "Vimeo", category: "Video Hosting", cost: 20, logo: "/logo-vimeo.svg" },
   ];
 
   const coachlyFeatures = [
-    { name: "Community", description: "Basic + Pro", isPro: false },
-    { name: "Sales Funnels", description: "Basic + Pro", isPro: false },
-    { name: "Video Messages", description: "Basic + Pro", isPro: false },
-    { name: "Live Coaching", description: "Pro-only", isPro: true },
-    { name: "Video Hosting", description: "", isPro: false },
+    { name: "Unlimited members", description: "Manage unlimited clients and students.", isPro: false },
+    { name: "Community", description: "Group chat & content calendar included.", isPro: false },
+    { name: "Unlimited courses", description: "Launch as many programs as you like.", isPro: false },
+    { name: "Sales funnels", description: "Build landing pages that convert.", isPro: false },
+    { name: "Host Live Calls & Meet", description: "Book and host live coaching sessions.", isPro: true },
+    { name: "Screen recording & video hosting", description: "Record, upload and deliver trainings in one place.", isPro: true },
+    { name: "Custom domain & Meet", description: "Brand your site & run calls inside Coachly.", isPro: true },
   ];
 
   const totalCost = competitorTools.reduce((sum, tool) => sum + tool.cost, 0);
@@ -63,10 +66,12 @@ const Comparison = () => {
                 >
                   <div className="flex items-center justify-between gap-3 sm:gap-4">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className="w-10 h-10 sm:w-12 sm:h-14 rounded-xl bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl sm:text-2xl font-bold text-gray-900">
-                          {tool.brand.charAt(0)}
-                        </span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <img 
+                          src={tool.logo} 
+                          alt={`${tool.brand} logo`} 
+                          className="w-full h-full object-contain"
+                        />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="font-bold text-sm sm:text-base md:text-lg mb-1 text-gray-900 truncate">{tool.brand}</h4>
@@ -83,9 +88,9 @@ const Comparison = () => {
 
             {/* Right Column - Coachly */}
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-purple-400 to-purple-700 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white">Coachly</h3>
-                <p className="text-center text-sm sm:text-base text-white/90">All-in-one platform</p>
+              <div className="bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white">Replace 5+ tools with Coachly.</h3>
+                <p className="text-center text-sm sm:text-base text-gray-300">Stop stacking subscriptions. Run your entire coaching business on one platform.</p>
               </div>
 
               {coachlyFeatures.map((feature, index) => (
@@ -127,9 +132,12 @@ const Comparison = () => {
           <div className="bg-gray-900 text-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl hover:shadow-3xl transition-all hover:scale-105">
             <div className="text-center">
               <h3 className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 uppercase tracking-wide">THE COST OF OTHER TOOLS:</h3>
-              <div>
+              <div className="mb-4">
                 <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">${totalCost.toLocaleString()}</span>
                 <span className="text-lg sm:text-xl md:text-2xl">/month</span>
+              </div>
+              <div className="text-sm sm:text-base text-gray-400">
+                <div>$1</div>
               </div>
             </div>
           </div>
@@ -138,7 +146,7 @@ const Comparison = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.15),transparent)]"></div>
             <div className="relative z-10 text-center">
-              <h3 className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 uppercase tracking-wide">WHAT YOU PAY FOR:</h3>
+              <h3 className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 uppercase tracking-wide">WHAT YOU PAY FOR COACHLY:</h3>
               <div className="flex items-center justify-center gap-4 mb-3 sm:mb-4">
                 <div>
                   <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">$49</span>
@@ -149,6 +157,9 @@ const Comparison = () => {
                   <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">$89</span>
                   <span className="text-lg sm:text-xl md:text-2xl"> one-time</span>
                 </div>
+              </div>
+              <div className="text-sm sm:text-base">
+                <div>$3</div>
               </div>
             </div>
           </div>
