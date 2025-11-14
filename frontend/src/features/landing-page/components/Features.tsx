@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback } from "react";
 import featureAnalytics from '/feature-analytics.jpg';
@@ -125,16 +125,9 @@ const Features = () => {
                       </div>
                     </div>
                     <div>
-                      <p className="text-gray-700 text-sm sm:text-base md:text-lg mb-4 sm:mb-6 leading-relaxed font-medium">
+                      <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-medium">
                         {feature.description}
                       </p>
-                      <a 
-                        href={feature.link}
-                        className="inline-flex items-center gap-2 text-gray-900 font-bold text-sm sm:text-base md:text-lg hover:gap-4 transition-all group"
-                      >
-                        Learn More 
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                      </a>
                     </div>
                   </div>
                 </div>
