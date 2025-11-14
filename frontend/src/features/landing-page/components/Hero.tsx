@@ -34,7 +34,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed">
-              Coachly replaces 5–7 tools with one simple dashboard — courses, clients, sessions, payments, and community. No tech headaches.
+              The all-in-one platform helping coaches build courses, communities and recurring income.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">

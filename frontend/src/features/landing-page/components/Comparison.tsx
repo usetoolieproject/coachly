@@ -15,10 +15,10 @@ const Comparison = () => {
     { name: "Unlimited members", description: "Manage unlimited clients and students.", isPro: false },
     { name: "Community", description: "Group chat & content calendar included.", isPro: false },
     { name: "Unlimited courses", description: "Launch as many programs as you like.", isPro: false },
-    { name: "Sales funnels", description: "Build landing pages that convert.", isPro: false },
-    { name: "Host Live Calls & Meet", description: "Book and host live coaching sessions.", isPro: true },
+    { name: "Sales funnels", description: "Landing page that converts.", isPro: false },
+    { name: "Host Live Calls with Meet", description: "Book and host live coaching sessions.", isPro: true },
     { name: "Screen recording & video hosting", description: "Record, upload and deliver trainings in one place.", isPro: true },
-    { name: "Custom domain & Meet", description: "Brand your site & run calls inside Coachly.", isPro: true },
+    { name: "Custom Domain", description: "Brand your site & connect your own domain.", isPro: true },
   ];
 
   const totalCost = competitorTools.reduce((sum, tool) => sum + tool.cost, 0);
