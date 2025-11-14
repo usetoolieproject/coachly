@@ -176,7 +176,7 @@ const Terms = () => {
               <li><strong>Chargebacks:</strong> Initiating a chargeback may result in immediate account suspension</li>
             </ul>
             <p className="text-gray-700 leading-relaxed">
-              To request a refund, contact us at <a href="mailto:support@usecoachly.com" className="text-purple-600 hover:underline">support@usecoachly.com</a> with your purchase details.
+              To request a refund, please contact us through our contact form with your purchase details.
             </p>
           </section>
 
@@ -248,11 +248,8 @@ const Terms = () => {
           {/* Contact */}
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Information</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              If you have questions about these Terms, please contact us:
-            </p>
             <p className="text-gray-700 leading-relaxed">
-              Email: <a href="mailto:legal@usecoachly.com" className="text-purple-600 hover:underline">legal@usecoachly.com</a>
+              If you have questions about these Terms, please use our contact form to reach out.
             </p>
           </section>
         </div>

@@ -149,7 +149,7 @@ const Privacy = () => {
               <li><strong>Objection:</strong> Object to certain processing activities</li>
             </ul>
             <p className="text-gray-700 leading-relaxed">
-              To exercise these rights, please contact us at <a href="mailto:privacy@usecoachly.com" className="text-purple-600 hover:underline">privacy@usecoachly.com</a>.
+              To exercise these rights, please contact us through our contact form.
             </p>
           </section>
 
@@ -186,11 +186,8 @@ const Privacy = () => {
           {/* Contact */}
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              If you have questions about this Privacy Policy, please contact us:
-            </p>
             <p className="text-gray-700 leading-relaxed">
-              Email: <a href="mailto:privacy@usecoachly.com" className="text-purple-600 hover:underline">privacy@usecoachly.com</a>
+              If you have questions about this Privacy Policy, please use our contact form to reach out.
             </p>
           </section>
         </div>
