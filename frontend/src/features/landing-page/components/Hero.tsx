@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Play, Sparkles, Calendar, Users, Zap } from 'lucide-react';
 import heroDashboard from '/hero-dashboard.jpg';
 
 const Hero = () => {
@@ -24,17 +24,17 @@ const Hero = () => {
           <div className="space-y-6 sm:space-y-8">
             <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-100 rounded-full border border-purple-200 shadow-sm">
               <span className="w-2 h-2 bg-purple-600 rounded-full animate-pulse-slow" />
-              <span className="text-xs sm:text-sm font-medium text-purple-800">Transform Your Coaching Business</span>
+              <span className="text-xs sm:text-sm font-medium text-purple-800">New: All-in-One Coaching OS</span>
             </div>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900">
-              Scale Your{' '}
-              <span className="text-purple-600">Coaching</span>
-              <br />Business Effortlessly
+              Run Your Entire{' '}
+              <span className="bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">Coaching Business</span>
+              {' '}From One Platform
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed">
-              The all-in-one platform that helps coaches manage clients, schedule sessions, and grow their business—without the complexity.
+              Coachly replaces 5–7 tools with one simple dashboard — courses, clients, sessions, payments, and community. No tech headaches.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -45,6 +45,41 @@ const Hero = () => {
                 Get Started
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
+              <button className="bg-white border-2 border-purple-200 text-purple-600 text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:shadow-lg hover:border-purple-300 transition-all duration-300 flex items-center justify-center group">
+                <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                Watch Demo (30s)
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-500">No credit card needed · Free to try</p>
+
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span key={star} className="text-yellow-400 text-lg">★</span>
+                ))}
+              </div>
+              <span className="text-sm text-gray-600">Trusted by <span className="font-semibold">1,000+</span> coaches</span>
+            </div>
+
+            {/* Feature Badges */}
+            <div className="flex flex-wrap gap-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                <span className="text-sm font-medium text-gray-700">Unlimited Courses</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <Calendar className="w-5 h-5 text-blue-600" />
+                <span className="text-sm font-medium text-gray-700">Scheduling</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <Users className="w-5 h-5 text-purple-600" />
+                <span className="text-sm font-medium text-gray-700">Community</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <Zap className="w-5 h-5 text-green-600" />
+                <span className="text-sm font-medium text-gray-700">Payments</span>
+              </div>
             </div>
             
           </div>
