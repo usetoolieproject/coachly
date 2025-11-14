@@ -29,7 +29,11 @@ export const videoLibraryService = {
   /**
    * Upload a video to Bunny CDN
    */
-  async uploadVideo(videoFile: File, title?: string): Promise<Video> {
+  async uploadVideo(
+    videoFile: File, 
+    title?: string,
+    onProgress?: (percent: number) => void
+  ): Promise<Video> {
     const formData = new FormData();
     formData.append('video', videoFile);
     if (title) {
@@ -44,6 +48,9 @@ export const videoLibraryService = {
         if (progressEvent.total) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           console.log(`Upload Progress: ${percentCompleted}%`);
+          if (onProgress) {
+            onProgress(percentCompleted);
+          }
         }
       },
     });

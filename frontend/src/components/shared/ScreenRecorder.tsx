@@ -4,6 +4,7 @@ import {
   Play, Pause, Circle, RectangleHorizontal, Volume2, Eye
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { videoLibraryService } from '../../services/videoLibraryService';
 
 interface ScreenRecorderProps {
   onUploadComplete?: (url: string) => void;
@@ -836,65 +837,37 @@ export const ScreenRecorder: React.FC<ScreenRecorderProps> = ({
       // Create File object from blob
       const fileName = `recording-${Date.now()}.webm`;
       const file = new File([blob], fileName, { type: 'video/webm' });
+      const title = `Screen Recording ${new Date().toLocaleString()}`;
 
-      // Create form data
-      const formData = new FormData();
-      formData.append('video', file);
-      formData.append('title', `Screen Recording ${new Date().toLocaleString()}`);
+      console.log('📤 Uploading video to library...', fileName);
 
-      // Upload with progress tracking using XMLHttpRequest
-      const xhr = new XMLHttpRequest();
-
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          const percentComplete = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(percentComplete);
-        }
+      // Upload using the video library service with progress tracking
+      const result = await videoLibraryService.uploadVideo(file, title, (percent) => {
+        setUploadProgress(percent);
       });
 
-      xhr.addEventListener('load', () => {
-        if (xhr.status === 200) {
-          const result = JSON.parse(xhr.responseText);
-          setIsUploading(false);
-          setUploadProgress(100);
-          
-          console.log('✅ Video uploaded successfully:', result);
-          alert('Video saved to library successfully!');
-          
-          if (onUploadComplete && result.video?.video_url) {
-            onUploadComplete(result.video.video_url);
-          }
-
-          // Clear the recording after successful upload
-          handleDelete();
-        } else {
-          const errorData = JSON.parse(xhr.responseText);
-          throw new Error(errorData.error || 'Upload failed');
-        }
-      });
-
-      xhr.addEventListener('error', () => {
-        throw new Error('Network error during upload');
-      });
-
-      xhr.addEventListener('abort', () => {
-        throw new Error('Upload cancelled');
-      });
-
-      // Get API base URL with credentials
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      setIsUploading(false);
+      setUploadProgress(100);
       
-      xhr.open('POST', `${import.meta.env.VITE_API_BASE_URL || 'https://coachly-backend.onrender.com'}/api/videos/upload`);
-      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-      xhr.send(formData);
+      console.log('✅ Video uploaded successfully:', result);
+      alert('Video saved to library successfully!');
+      
+      if (onUploadComplete && result.video_url) {
+        onUploadComplete(result.video_url);
+      }
+
+      // Clear the recording after successful upload
+      handleDelete();
 
     } catch (err: any) {
       console.error('❌ Upload error:', err);
       
-      if (err.message?.includes('Storage limit exceeded')) {
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to upload video';
+      
+      if (errorMessage.includes('Storage limit exceeded') || errorMessage.includes('STORAGE_LIMIT_EXCEEDED')) {
         setError('Storage limit exceeded. Please delete some videos to free up space.');
       } else {
-        setError(err.message || 'Failed to upload video. Please try again.');
+        setError(errorMessage);
       }
       
       setIsUploading(false);
