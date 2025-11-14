@@ -41,6 +41,14 @@ try {
   console.error('Resend initialization failed:', e)
 }
 
+// Initialize Resend for password reset emails
+import { initializeResend as initializePasswordResetResend } from './controllers/passwordResetController.js';
+try {
+  initializePasswordResetResend();
+} catch (e) {
+  console.error('Password Reset Resend initialization failed:', e)
+}
+
 const app = express()
 
 // Trust proxy for correct client IP detection behind reverse proxy (Render, etc.)

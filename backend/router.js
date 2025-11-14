@@ -104,6 +104,7 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { authenticateToken, requireRole, checkInstructorPremium } from './middleware/auth.js';
 import { requirePlanFeature } from './middleware/planLimits.js';
+import { requestPasswordReset, resetPassword } from './controllers/passwordResetController.js';
 import { createCheckoutSession, createCommunityCheckoutSession, stripeWebhook, platformSubscriptionWebhook, backfillPayments, confirmCheckoutSession } from './controllers/billingController.js';
 import { 
   createSubscriptionCheckout, 
@@ -211,6 +212,10 @@ router.post('/auth/logout', logout);
 router.get('/auth/check-subdomain/:subdomain', checkSubdomain);
 router.get('/auth/check-subdirectory/:subdirectory', checkSubdirectory); // Legacy route
 router.get('/auth/instructors', getInstructors);
+
+// Password Reset routes
+router.post('/auth/forgot-password', authLimiter, requestPasswordReset);
+router.post('/auth/reset-password', authLimiter, resetPassword);
 
 router.get('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getCourses);
 router.post('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, createCourse);
