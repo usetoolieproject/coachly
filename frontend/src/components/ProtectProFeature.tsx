@@ -1,0 +1,43 @@
+import React from 'react';
+import { ProFeatureBlocker } from '../components/shared';
+import { useSubscriptionPlan } from '../hooks/useSubscriptionPlan';
+
+interface ProtectProFeatureProps {
+  featureName: string;
+  featureKey: 'screenRecording' | 'videoHosting' | 'meet' | 'customDomain';
+  description?: string;
+  children: React.ReactNode;
+}
+
+/**
+ * ProtectProFeature Component
+ * Wraps Pro-only features and blocks Basic users from accessing them
+ */
+export const ProtectProFeature: React.FC<ProtectProFeatureProps> = ({
+  featureName,
+  featureKey,
+  description,
+  children
+}) => {
+  const { hasFeature, isLoading } = useSubscriptionPlan();
+
+  // Show loading state while checking subscription
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Block access if user doesn't have the feature
+  if (!hasFeature(featureKey)) {
+    return <ProFeatureBlocker featureName={featureName} description={description} />;
+  }
+
+  // Allow access if user has Pro
+  return <>{children}</>;
+};

@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '../../contexts/SidebarContext';
-import { DarkModeToggle } from '../shared';
+import { DarkModeToggle, ProBadge } from '../shared';
+import { useSubscriptionPlan } from '../../hooks/useSubscriptionPlan';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -35,6 +36,7 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
   const { user, logout } = useAuth();
   const { isDarkMode } = useTheme();
   const { isCollapsed, sidebarMode, setSidebarMode, setIsHovering, isHovering } = useSidebar();
+  const { hasFeature } = useSubscriptionPlan();
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<{ [key: string]: boolean }>({});
@@ -54,70 +56,83 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       label: 'Dashboard',
       icon: LayoutDashboard,
       path: '/coach/dashboard',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'courses',
       label: 'Courses',
       icon: BookOpen,
       path: '/coach/courses',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'record',
       label: 'Record',
       icon: Disc,
       path: '/coach/record',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: true,
+      proFeature: 'screenRecording' as const
     },
     {
       key: 'library',
       label: 'Video Library',
       icon: Library,
       path: '/coach/library',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: true,
+      proFeature: 'videoHosting' as const
     },
     {
       key: 'community',
       label: 'Community',
       icon: MessageCircle,
       path: '/coach/community',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'live-calls',
       label: 'Live Calls',
       icon: Video,
       path: '/coach/live-calls',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'meetings',
       label: 'Video Meetings',
       icon: Video,
       path: '/coach/meetings',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: true,
+      proFeature: 'meet' as const
     },
     {
       key: 'students',
       label: 'Students',
       icon: Users,
       path: '/coach/students',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'social-calendar',
       label: 'Social Calendar',
       icon: Calendar,
       path: '/coach/social-calendar',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     },
     {
       key: 'website',
       label: 'Website',
       icon: Globe,
       path: '/coach/websitev2',
-      hasSubmenu: false
+      hasSubmenu: false,
+      requiresPro: false
     }
   ];
 
@@ -129,10 +144,17 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
     return location.pathname === path;
   };
 
-  const handleNavigation = (path: string, hasSubmenu: boolean = false) => {
+  const handleNavigation = (path: string, hasSubmenu: boolean = false, requiresPro: boolean = false, proFeature?: 'screenRecording' | 'videoHosting' | 'meet' | 'customDomain') => {
     if (hasSubmenu) {
       toggleMenu(path);
     } else {
+      // Check if feature requires Pro and user doesn't have it
+      if (requiresPro && proFeature && !hasFeature(proFeature)) {
+        // Don't navigate, just show an alert or do nothing
+        alert(`This feature requires a Pro subscription. Please upgrade to access ${proFeature}.`);
+        return;
+      }
+      
       navigate(path);
       // Close mobile menu after navigation
       if (onMobileClose) {
@@ -334,34 +356,45 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       {/* Menu Items */}
       <nav className="flex-1 overflow-y-auto py-4">
         <div className={`space-y-1 ${isCollapsed ? 'px-2' : 'px-3'}`}>
-          {menuItems.map((item) => (
-            <div key={item.key}>
-              <button
-                onClick={() => handleNavigation(item.path, item.hasSubmenu)}
-                className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0 py-2' : 'px-3 py-2'} text-sm font-medium rounded-lg transition-colors ${
-                  isActive(item.path) || (item.hasSubmenu && expandedMenus[item.key])
-                    ? (isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700')
-                    : (isDarkMode ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-gray-700')
-                }`}
-                title={isCollapsed ? item.label : undefined}
-              >
-                <item.icon size={20} className="flex-shrink-0" />
-                {!isCollapsed && (
-                  <>
-                    <span className="ml-3 flex-1 text-left">{item.label}</span>
-                    {item.hasSubmenu && (
-                      <ChevronDown 
-                        size={16} 
-                        className={`transition-transform ${
-                          expandedMenus[item.key] ? 'rotate-180' : ''
-                        }`}
-                      />
-                    )}
-                  </>
-                )}
-              </button>
-            </div>
-          ))}
+          {menuItems.map((item) => {
+            const isProFeature = item.requiresPro && item.proFeature;
+            const hasAccess = !isProFeature || hasFeature(item.proFeature!);
+            
+            return (
+              <div key={item.key}>
+                <button
+                  onClick={() => handleNavigation(item.path, item.hasSubmenu, item.requiresPro, item.proFeature)}
+                  disabled={isProFeature && !hasAccess}
+                  className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0 py-2' : 'px-3 py-2'} text-sm font-medium rounded-lg transition-colors ${
+                    isProFeature && !hasAccess
+                      ? (isDarkMode ? 'text-gray-600 cursor-not-allowed opacity-50' : 'text-gray-400 cursor-not-allowed opacity-50')
+                      : isActive(item.path) || (item.hasSubmenu && expandedMenus[item.key])
+                        ? (isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700')
+                        : (isDarkMode ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-gray-700 hover:bg-gray-50')
+                  }`}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <item.icon size={20} className="flex-shrink-0" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="ml-3 flex-1 text-left">{item.label}</span>
+                      {isProFeature && !hasAccess && (
+                        <ProBadge size="sm" showText={true} inline={true} />
+                      )}
+                      {item.hasSubmenu && (
+                        <ChevronDown 
+                          size={16} 
+                          className={`transition-transform ${
+                            expandedMenus[item.key] ? 'rotate-180' : ''
+                          }`}
+                        />
+                      )}
+                    </>
+                  )}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </nav>
       

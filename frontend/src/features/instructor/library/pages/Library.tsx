@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Video, Search, Grid, List, Filter, Upload, Trash2, Play, Clock, FileVideo, Loader2, AlertCircle } from 'lucide-react';
 import { videoLibraryService } from '../../../../services/videoLibraryService';
 import { HlsVideoPlayer } from '../../../../components/shared/HlsVideoPlayer';
+import { ProtectProFeature } from '../../../../components/ProtectProFeature';
 
 interface VideoItem {
   id: string;
@@ -145,8 +146,13 @@ const Library = () => {
   const totalDuration = videoLibraryService.formatTotalDuration(storageStats?.totalDurationSeconds || 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <ProtectProFeature
+      featureName="Video Library"
+      featureKey="videoHosting"
+      description="Store and manage unlimited videos with secure, fast hosting and seamless streaming."
+    >
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Video Library</h1>
@@ -486,8 +492,9 @@ const Library = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </ProtectProFeature>
   );
 };
 

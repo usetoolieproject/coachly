@@ -1,6 +1,7 @@
 /**
  * Clean Meetings Dashboard - Zoom-inspired Design
  * Simple, elegant interface for video meetings
+ * Requires Pro subscription
  */
 
 import React, { useState, useEffect } from 'react';
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 import { apiFetch, getAuthHeaders } from '../../../services/api';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { ProtectProFeature } from '../../../components/ProtectProFeature';
 
 interface Meeting {
   id: string;
@@ -141,16 +143,21 @@ const CleanMeetingsDashboard: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen p-8 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
-        : 'bg-gradient-to-br from-gray-50 to-gray-100'
-    }`}>
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            Video Meetings
+    <ProtectProFeature
+      featureName="Video Meetings"
+      featureKey="meet"
+      description="Host live HD video meetings and coaching sessions with screen sharing, chat, and recording capabilities."
+    >
+      <div className={`min-h-screen p-8 ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
+          : 'bg-gradient-to-br from-gray-50 to-gray-100'
+      }`}>
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Video Meetings
           </h1>
           <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
             Create and manage your virtual meetings
@@ -700,8 +707,9 @@ const JoinMeetingModal: React.FC<JoinMeetingModalProps> = ({ onClose }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </ProtectProFeature>
   );
 };
 

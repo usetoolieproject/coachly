@@ -49,12 +49,19 @@ export const useSubscriptionPlan = () => {
   const isBasic = planName === 'Basic';
   const hasActiveSubscription = data?.hasActiveSubscription || false;
 
+  // Feature availability based on plan
+  const hasFeature = (feature: 'screenRecording' | 'videoHosting' | 'meet' | 'customDomain') => {
+    if (!hasActiveSubscription) return false; // No active subscription = no features
+    return isPro; // Pro plan has all features, Basic doesn't have these
+  };
+
   return {
     planName,
     isPro,
     isBasic,
     hasActiveSubscription,
     subscription: data?.subscription || null,
+    hasFeature,
     isLoading,
     error,
   };
