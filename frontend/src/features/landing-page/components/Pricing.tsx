@@ -17,7 +17,6 @@ const basicFeatures = [
 ];
 
 const proFeatures = [
-  "Everything on Basic",
   "Screen Recording",
   "Video Hosting",
   "Meet",
