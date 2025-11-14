@@ -10,7 +10,11 @@ import bunnyService from '../services/bunnyService.js';
  */
 export const uploadVideo = async (req, res) => {
   try {
-    const instructorId = req.user?.instructor?.id;
+    // Get instructor from user object (it's an array from Supabase join)
+    const instructor = req.user?.instructors?.[0];
+    const instructorId = instructor?.id;
+    
+    console.log('📋 Upload request - User:', req.user?.email, 'Role:', req.user?.role, 'Instructor ID:', instructorId);
     
     if (!instructorId) {
       return res.status(403).json({ error: 'Instructor access required' });
@@ -67,7 +71,8 @@ export const uploadVideo = async (req, res) => {
  */
 export const getVideos = async (req, res) => {
   try {
-    const instructorId = req.user?.instructor?.id;
+    const instructor = req.user?.instructors?.[0];
+    const instructorId = instructor?.id;
 
     if (!instructorId) {
       return res.status(403).json({ error: 'Instructor access required' });
@@ -97,7 +102,8 @@ export const getVideos = async (req, res) => {
  */
 export const getStorageStats = async (req, res) => {
   try {
-    const instructorId = req.user?.instructor?.id;
+    const instructor = req.user?.instructors?.[0];
+    const instructorId = instructor?.id;
 
     if (!instructorId) {
       return res.status(403).json({ error: 'Instructor access required' });
@@ -127,8 +133,13 @@ export const getStorageStats = async (req, res) => {
  */
 export const deleteVideo = async (req, res) => {
   try {
-    const instructorId = req.user.instructor.id;
+    const instructor = req.user?.instructors?.[0];
+    const instructorId = instructor?.id;
     const videoId = req.params.videoId;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
 
     await bunnyService.deleteVideo(videoId, instructorId);
 
@@ -151,8 +162,13 @@ export const deleteVideo = async (req, res) => {
  */
 export const bulkDeleteVideos = async (req, res) => {
   try {
-    const instructorId = req.user.instructor.id;
+    const instructor = req.user?.instructors?.[0];
+    const instructorId = instructor?.id;
     const { videoIds } = req.body;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
 
     if (!Array.isArray(videoIds) || videoIds.length === 0) {
       return res.status(400).json({ error: 'No video IDs provided' });
