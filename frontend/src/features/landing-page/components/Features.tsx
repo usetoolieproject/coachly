@@ -104,24 +104,20 @@ const Features = () => {
                   key={index}
                   className="flex-[0_0_90%] sm:flex-[0_0_85%] md:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0 px-3 sm:px-4 md:px-5"
                 >
-                  <div className={`${feature.bgColor} rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-[500px] sm:h-[550px] md:h-[600px] flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100`}>
-                    <div>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 sm:mb-4 tracking-tight text-gray-900 flex items-start">
-                        {feature.title}
-                      </h3>
-                      <div className="aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-white/80 shadow-md">
-                        <img 
-                          src={feature.image} 
-                          alt={feature.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                  <div className={`${feature.bgColor} rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100`}>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 sm:mb-4 tracking-tight text-gray-900">
+                      {feature.title}
+                    </h3>
+                    <div className="aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-white/80 shadow-md">
+                      <img 
+                        src={feature.image} 
+                        alt={feature.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div>
-                      <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-medium">
-                        {feature.description}
-                      </p>
-                    </div>
+                    <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-medium">
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
               ))}
