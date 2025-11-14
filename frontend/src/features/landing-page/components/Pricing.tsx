@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 // Plan IDs from database
@@ -8,21 +8,20 @@ const PLAN_IDS = {
 } as const;
 
 const basicFeatures = [
+  "Unlimited Members",
   "Unlimited Courses",
   "Community Chat",
-  "Members – Up to 1,000",
-  { text: "10% transaction fee", excluded: true },
   "Content Calendar",
-  "One-page website",
+  "Live Calls Schedule",
+  "Sales Funnel",
 ];
 
 const proFeatures = [
-  "Everything in Basic",
-  "Screen recorder",
-  "Meet for Coaching Calls",
-  "Full website builder + templates",
-  "Custom domains",
-  "1-on-1 setup call",
+  "Everything on Basic",
+  "Screen Recording",
+  "Video Hosting",
+  "Meet",
+  "Custom Domain",
 ];
 
 const Pricing = () => {
@@ -61,27 +60,16 @@ const Pricing = () => {
             </div>
             
             <div className="flex-1 space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-              {basicFeatures.map((feature, index) => {
-                const isExcluded = typeof feature === 'object' && feature.excluded;
-                const text = typeof feature === 'string' ? feature : feature.text;
-                
-                return (
-                  <div key={index} className="flex items-center gap-3">
-                    {isExcluded ? (
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <X className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
-                      </div>
-                    ) : (
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
-                      </div>
-                    )}
-                    <span className={`text-sm sm:text-base ${isExcluded ? "text-gray-500" : "text-gray-900"}`}>
-                      {text}
-                    </span>
+              {basicFeatures.map((feature, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
                   </div>
-                );
-              })}
+                  <span className="text-sm sm:text-base text-gray-900">
+                    {feature}
+                  </span>
+                </div>
+              ))}
             </div>
             
             <div>

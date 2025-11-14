@@ -59,7 +59,7 @@ const Hero = () => {
                   <span key={star} className="text-yellow-400 text-lg">★</span>
                 ))}
               </div>
-              <span className="text-sm text-gray-600">Trusted by <span className="font-semibold">1,000+</span> coaches</span>
+              <span className="text-sm text-gray-600">Trusted by <span className="font-semibold">Coaches & Course Creators</span></span>
             </div>
 
             {/* Feature Badges */}

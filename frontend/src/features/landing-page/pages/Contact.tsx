@@ -200,34 +200,6 @@ const Contact = () => {
           </form>
         </div>
 
-        {/* Common Questions */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-          <div className="space-y-4">
-            <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="font-semibold text-gray-900 mb-2">How do I get started with Coachly?</h3>
-              <p className="text-gray-600">
-                Simply sign up for an account at <Link to="/signup" className="text-purple-600 hover:underline">coachly.com/signup</Link> and 
-                start building your coaching business. Our platform includes everything you need: courses, community, video hosting, and more.
-              </p>
-            </div>
-            <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="font-semibold text-gray-900 mb-2">What payment methods do you accept?</h3>
-              <p className="text-gray-600">
-                We accept all major credit cards and debit cards through our secure payment processor. 
-                All payments are processed securely and encrypted.
-              </p>
-            </div>
-            <div className="border-l-4 border-purple-600 pl-4">
-              <h3 className="font-semibold text-gray-900 mb-2">Can I try Coachly before purchasing?</h3>
-              <p className="text-gray-600">
-                Yes! We offer a trial period for new users. You can explore all features and see how Coachly 
-                can transform your coaching business before making a commitment.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Back to Home */}
         <div className="pt-8 border-t border-gray-200">
           <Link 

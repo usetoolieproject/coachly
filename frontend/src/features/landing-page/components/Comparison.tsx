@@ -4,10 +4,10 @@ import { Check } from 'lucide-react';
 const Comparison = () => {
   const competitorTools = [
     { brand: "Skool", category: "Community", cost: 99, logo: "/brand-skool.svg" },
-    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, logo: "/brand-clickfunnels.svg" },
-    { brand: "Kajabi", category: "Courses", cost: 149, logo: "/brand-kajabi.svg" },
-    { brand: "Loom", category: "Screen Recording", cost: 12, logo: "/brand-loom.svg" },
-    { brand: "Zoom", category: "Live Coaching", cost: 30, logo: "/brand-zoom.svg" },
+    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, logo: "/brand-clickfunnels-new.svg" },
+    { brand: "Kajabi", category: "Courses", cost: 149, logo: "/brand-kajabi-new.svg" },
+    { brand: "Loom", category: "Screen Recording", cost: 12, logo: "/brand-loom-new.svg" },
+    { brand: "Zoom", category: "Live Coaching", cost: 30, logo: "/brand-zoom-new.svg" },
     { brand: "Vimeo", category: "Video Hosting", cost: 20, logo: "/brand-vimeo.svg" },
   ];
 
@@ -67,7 +67,7 @@ const Comparison = () => {
                 >
                   <div className="flex items-center justify-between gap-4 w-full">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <div className="w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
                         <img 
                           src={tool.logo} 
                           alt={`${tool.brand} logo`}
@@ -137,9 +137,6 @@ const Comparison = () => {
                 <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">${totalCost.toLocaleString()}</span>
                 <span className="text-lg sm:text-xl md:text-2xl">/month</span>
               </div>
-              <div className="text-sm sm:text-base text-gray-400">
-                <div>$1</div>
-              </div>
             </div>
           </div>
 
@@ -151,16 +148,13 @@ const Comparison = () => {
               <div className="flex items-center justify-center gap-4 mb-3 sm:mb-4">
                 <div>
                   <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">$49</span>
-                  <span className="text-lg sm:text-xl md:text-2xl"> one-time</span>
+                  <span className="text-lg sm:text-xl md:text-2xl"> Basic</span>
                 </div>
                 <div className="w-px h-12 sm:h-16 bg-white/50"></div>
                 <div>
                   <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black">$89</span>
-                  <span className="text-lg sm:text-xl md:text-2xl"> one-time</span>
+                  <span className="text-lg sm:text-xl md:text-2xl"> Pro</span>
                 </div>
-              </div>
-              <div className="text-sm sm:text-base">
-                <div>$3</div>
               </div>
             </div>
           </div>
