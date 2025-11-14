@@ -159,14 +159,14 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
         };
         localStorage.setItem('pendingInstructorSignup', JSON.stringify(pendingSignupData));
 
-        // Store promo code in cookie to be redeemed after payment
+        // Store promo code in cookie as backup (for non-free promo codes redeemed after payment)
         if (formData.promoCode && formData.promoCode.trim()) {
           const promoCode = formData.promoCode.trim().toUpperCase();
           setCookie('pendingPromoCode', promoCode, 1); // 1 day expiry
         }
 
         // Create checkout session for selected plan (public endpoint for non-authenticated users)
-        const { url } = await apiFetch('/subscriptions/checkout/public', {
+        const response = await apiFetch('/subscriptions/checkout/public', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -174,13 +174,31 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
           body: JSON.stringify({ 
             planId: formData.selectedPlan,
             email: formData.email,
-            signupData: JSON.stringify(pendingSignupData)
+            signupData: JSON.stringify(pendingSignupData),
+            promoCode: formData.promoCode?.trim().toUpperCase() || undefined // Include promo code for backend validation
           }),
         });
 
-        // Redirect to Stripe checkout immediately
-        if (url) {
-          window.location.href = url;
+        // Check if payment should be skipped (100% discount or free duration promo)
+        if (response.skipPayment) {
+          // Store token and redirect to subdomain
+          localStorage.setItem('authToken', response.token);
+          
+          // Clear pending signup data
+          localStorage.removeItem('pendingInstructorSignup');
+          
+          const instructorSubdomain = response.instructor?.subdomain || pendingSignupData.subdomain;
+          const apex = window.location.hostname.includes('localhost') ? 'localhost:5173' : 'usecoachly.com';
+          const protocol = window.location.hostname.includes('localhost') ? 'http' : 'https';
+          const redirectUrl = `${protocol}://${instructorSubdomain}.${apex}/coach/dashboard`;
+          
+          window.location.href = redirectUrl;
+          return;
+        }
+
+        // Normal payment flow - redirect to Stripe checkout
+        if (response.url) {
+          window.location.href = response.url;
         }
       } else {
         // INSTRUCTOR LOGIN - Use AuthContext
