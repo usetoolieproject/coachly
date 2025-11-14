@@ -52,6 +52,12 @@ const LandingPage = () => {
       const justLoggedOut = sessionStorage.getItem('justLoggedOut');
       if (justLoggedOut === 'true') {
         // Stay on landing page after logout, even if user object still exists
+        console.log('🚪 Landing page: User just logged out, staying here');
+        
+        // Clear the flag after a short delay to allow the page to settle
+        setTimeout(() => {
+          sessionStorage.removeItem('justLoggedOut');
+        }, 2000);
         return;
       }
     }

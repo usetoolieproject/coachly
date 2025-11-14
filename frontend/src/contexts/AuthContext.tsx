@@ -114,8 +114,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Check if user just logged out - skip auth check
       const justLoggedOut = sessionStorage.getItem('justLoggedOut');
       if (justLoggedOut === 'true') {
-        console.log('🚪 Just logged out, skipping auth check');
-        sessionStorage.removeItem('justLoggedOut');
+        console.log('🚪 Just logged out, skipping auth check and staying logged out');
+        // DON'T remove the flag yet - keep it for the landing page check
         setUser(null);
         setLoading(false);
         return;
