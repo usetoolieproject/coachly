@@ -18,6 +18,7 @@ import validateTenant from './middleware/validateTenant.js'
 import canonicalHost from './middleware/canonicalHost.js'
 import { initializeStripe } from './controllers/billingController.js'
 import { initializeResend } from './controllers/contactController.js'
+import { initializeResend as initializePasswordResetResend } from './controllers/passwordResetController.js'
 import rateLimit from 'express-rate-limit'
 import { initializeVideoMeetingSocket } from './services/videoMeetingService.js'
 
@@ -42,7 +43,6 @@ try {
 }
 
 // Initialize Resend for password reset emails
-import { initializeResend as initializePasswordResetResend } from './controllers/passwordResetController.js';
 try {
   initializePasswordResetResend();
 } catch (e) {
