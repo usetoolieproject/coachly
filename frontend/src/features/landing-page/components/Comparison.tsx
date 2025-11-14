@@ -2,12 +2,12 @@ import { Check } from 'lucide-react';
 
 const Comparison = () => {
   const competitorTools = [
-    { brand: "Skool", category: "Community", cost: 99, logo: "/logo-skool.svg" },
-    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, logo: "/logo-clickfunnels.svg" },
-    { brand: "Kajabi", category: "Courses", cost: 149, logo: "/logo-kajabi.svg" },
-    { brand: "Loom", category: "Screen Recording", cost: 12, logo: "/logo-loom.svg" },
-    { brand: "Zoom", category: "Live Coaching", cost: 30, logo: "/logo-zoom.svg" },
-    { brand: "Vimeo", category: "Video Hosting", cost: 20, logo: "/logo-vimeo.svg" },
+    { brand: "Skool", category: "Community", cost: 99, color: "#FF6B35" },
+    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, color: "#0099FF" },
+    { brand: "Kajabi", category: "Courses", cost: 149, color: "#FF5733" },
+    { brand: "Loom", category: "Screen Recording", cost: 12, color: "#625DF5" },
+    { brand: "Zoom", category: "Live Coaching", cost: 30, color: "#2D8CFF" },
+    { brand: "Vimeo", category: "Video Hosting", cost: 20, color: "#1AB7EA" },
   ];
 
   const coachlyFeatures = [
@@ -54,7 +54,7 @@ const Comparison = () => {
           <div className="grid lg:grid-cols-2 gap-6 md:gap-8 mb-8 sm:mb-12">
             {/* Left Column - Other Tools */}
             <div className="space-y-4">
-              <div className="bg-gray-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-6 border border-gray-200 shadow-sm">
+              <div className="bg-gray-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-200 shadow-sm">
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-gray-900">Other Tools</h3>
                 <p className="text-center text-sm sm:text-base text-gray-600">Multiple subscriptions required</p>
               </div>
@@ -62,20 +62,18 @@ const Comparison = () => {
               {competitorTools.map((tool, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 min-h-[80px] flex items-center"
                 >
-                  <div className="flex items-center justify-between gap-3 sm:gap-4">
+                  <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <img 
-                          src={tool.logo} 
-                          alt={`${tool.brand} logo`} 
-                          className="w-full h-full object-contain"
-                        />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: tool.color }}>
+                        <span className="text-xl font-bold text-white">
+                          {tool.brand.charAt(0)}
+                        </span>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-bold text-sm sm:text-base md:text-lg mb-1 text-gray-900 truncate">{tool.brand}</h4>
-                        <p className="text-gray-600 text-xs sm:text-sm truncate">{tool.category}</p>
+                        <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-900">{tool.brand}</h4>
+                        <p className="text-gray-600 text-xs sm:text-sm">{tool.category}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -88,7 +86,7 @@ const Comparison = () => {
 
             {/* Right Column - Coachly */}
             <div className="space-y-4">
-              <div className="bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg">
+              <div className="bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg">
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white">Replace 5+ tools with Coachly.</h3>
                 <p className="text-center text-sm sm:text-base text-gray-300">Stop stacking subscriptions. Run your entire coaching business on one platform.</p>
               </div>
@@ -96,17 +94,17 @@ const Comparison = () => {
               {coachlyFeatures.map((feature, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300 min-h-[80px] flex items-center"
                 >
-                  <div className="flex items-center justify-between gap-3 sm:gap-4">
+                  <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${feature.isPro ? 'bg-gradient-to-br from-orange-500 to-orange-600' : 'bg-gradient-to-br from-purple-600 to-purple-700'}`}>
-                        <Check className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${feature.isPro ? 'bg-gradient-to-br from-orange-500 to-orange-600' : 'bg-gradient-to-br from-purple-600 to-purple-700'}`}>
+                        <Check className="w-6 h-6 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-bold text-sm sm:text-base md:text-lg mb-1 text-gray-900 truncate">{feature.name}</h4>
+                        <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-900">{feature.name}</h4>
                         {feature.description && (
-                          <p className="text-gray-600 text-xs sm:text-sm truncate">{feature.description}</p>
+                          <p className="text-gray-600 text-xs sm:text-sm">{feature.description}</p>
                         )}
                       </div>
                     </div>
