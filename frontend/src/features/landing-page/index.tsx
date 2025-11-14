@@ -42,13 +42,10 @@ const LandingPage = () => {
       return;
     }
     
+    // Check if this is a logout - don't redirect
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('logout')) {
-      if (typeof window !== 'undefined') {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('logout');
-        window.history.replaceState({}, '', newUrl.toString());
-      }
+      // Stay on landing page after logout
       return;
     }
     

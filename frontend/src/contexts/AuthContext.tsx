@@ -91,9 +91,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Clear cookies for .usecoachly.com domain
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.usecoachly.com;";
         document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=usecoachly.com;";
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         
         setUser(null);
         setLoading(false);
+        
+        // Remove the logout parameter from URL without triggering a reload
+        window.history.replaceState({}, '', window.location.pathname);
         return;
       }
     }
@@ -125,6 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem('user');
+          sessionStorage.clear();
         } catch (e) {}
       }
     } finally {
@@ -233,17 +238,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoggingOut(true);
     setUser(null);
     
+    // Clear storage immediately
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear();
+      localStorage.clear();
+      
+      // Clear all cookies immediately before API call
+      document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+      });
+      
+      // Clear specific cookies
+      const cookieNames = ['session', 'auth', 'token', 'user', 'tenant', 'payment_session_id'];
+      cookieNames.forEach(name => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.usecoachly.com;`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=usecoachly.com;`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      });
+    }
+    
     try {
       await apiFetch('/auth/logout', { method: 'POST' });
     } catch {}
 
     if (typeof window !== 'undefined') {
       try {
-        // Clear all storage
-        sessionStorage.clear();
-        localStorage.clear();
-        
-        // Clear all cookies manually (client-side cleanup)
         const currentHost = window.location.hostname.toLowerCase();
         const parts = currentHost.split('.');
         if (parts[0] === 'www') parts.shift();
