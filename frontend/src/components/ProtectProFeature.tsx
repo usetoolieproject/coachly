@@ -20,6 +20,24 @@ export const ProtectProFeature: React.FC<ProtectProFeatureProps> = ({
   children
 }) => {
   const { hasFeature, isLoading, error } = useSubscriptionPlan();
+  const [timedOut, setTimedOut] = React.useState(false);
+
+  // Set a timeout to fail open after 3 seconds
+  React.useEffect(() => {
+    if (isLoading) {
+      const timer = setTimeout(() => {
+        console.warn('Subscription check timed out, allowing access');
+        setTimedOut(true);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+  // If timed out, allow access
+  if (timedOut) {
+    return <>{children}</>;
+  }
 
   // Show loading state while checking subscription (but only briefly)
   if (isLoading) {
