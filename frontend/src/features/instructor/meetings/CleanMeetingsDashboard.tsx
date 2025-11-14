@@ -466,24 +466,23 @@ const CleanMeetingsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Create Meeting Modal */}
-      {showCreateModal && (
-        <CreateMeetingModal 
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            setShowCreateModal(false);
-            fetchMeetings();
-          }}
-        />
-      )}
+        {/* Create Meeting Modal */}
+        {showCreateModal && (
+          <CreateMeetingModal 
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={() => {
+              setShowCreateModal(false);
+              fetchMeetings();
+            }}
+          />
+        )}
 
-      {/* Join Meeting Modal */}
-      {showJoinModal && (
-        <JoinMeetingModal 
-          onClose={() => setShowJoinModal(false)}
-        />
-      )}
-        </div>
+        {/* Join Meeting Modal */}
+        {showJoinModal && (
+          <JoinMeetingModal 
+            onClose={() => setShowJoinModal(false)}
+          />
+        )}
       </div>
     </ProtectProFeature>
   );
