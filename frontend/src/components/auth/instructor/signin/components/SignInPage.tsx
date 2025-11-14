@@ -73,9 +73,9 @@ export const SignInPage: React.FC<SignInPageProps> = ({
               Remember me
             </label>
           </div>
-          <button type="button" className="text-xs sm:text-sm text-purple-600 hover:text-purple-700">
+          <Link to="/forgot-password" className="text-xs sm:text-sm text-purple-600 hover:text-purple-700">
             Forgot password?
-          </button>
+          </Link>
         </div>
 
         <button

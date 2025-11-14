@@ -18,6 +18,8 @@ import {
   CleanAdminLogin
 } from "./components/auth";
 import SignupComplete from "./components/auth/instructor/SignupComplete";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 
 // Import layout components
 import { InstructorLayout, StudentLayout, AdminLayout } from "./components/layout";
@@ -140,6 +142,24 @@ function App() {
               element={
                 <PublicRoute>
                   <CleanStudentSignup />
+                </PublicRoute>
+              }
+            />
+            
+            {/* Password Reset Routes */}
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPassword />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PublicRoute>
+                  <ResetPassword />
                 </PublicRoute>
               }
             />

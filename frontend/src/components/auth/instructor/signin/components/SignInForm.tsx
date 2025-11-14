@@ -244,9 +244,9 @@ export const SignInForm: React.FC<SignInFormProps> = ({
               Remember me
             </label>
           </div>
-          <button type="button" className="text-sm text-purple-600 hover:text-purple-700">
+          <Link to="/forgot-password" className="text-sm text-purple-600 hover:text-purple-700">
             Forgot password?
-          </button>
+          </Link>
         </div>
       </>
     )}

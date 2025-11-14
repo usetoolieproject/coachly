@@ -11,7 +11,7 @@ import {
   Award,
 } from "lucide-react";
 import { useAuth } from '../../../contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { studentCourseService } from '../../../features/student/studentCourses/services';
 
 export default function CleanStudentLogin() {
@@ -345,12 +345,12 @@ export default function CleanStudentLogin() {
                       Remember me
                     </label>
                   </div>
-                  <button
-                    type="button"
+                  <Link
+                    to="/forgot-password"
                     className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium"
                   >
                     Forgot password?
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Submit Button */}
