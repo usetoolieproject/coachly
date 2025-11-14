@@ -1,5 +1,10 @@
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="48" height="48" rx="10" fill="#FF5733"/>
-  <path d="M24 12L28 20H32L24 36L20 28H16L24 12Z" fill="white"/>
-  <circle cx="24" cy="24" r="3" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120">
+  <defs>
+    <linearGradient id="k-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B"/>
+      <stop offset="100%" style="stop-color:#FF4757"/>
+    </linearGradient>
+  </defs>
+  <path d="M15 50 L40 25 L52 37 L27 62 Z M40 62 L52 50 L65 62 L52 75 Z" fill="url(#k-grad)"/>
+  <text x="75" y="85" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="#000">kajabi</text>
 </svg>

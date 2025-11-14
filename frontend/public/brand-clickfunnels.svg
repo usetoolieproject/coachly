@@ -1,5 +1,9 @@
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="48" height="48" rx="10" fill="#0099FF"/>
-  <path d="M10 24L18 16V21H30V27H18V32L10 24Z" fill="white"/>
-  <path d="M38 24L30 32V27H18V21H30V16L38 24Z" fill="white" opacity="0.7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250" width="600" height="250">
+  <rect x="230" y="10" width="140" height="100" rx="20" fill="#3E5670"/>
+  <circle cx="255" cy="35" r="5" fill="white"/>
+  <circle cx="280" cy="35" r="5" fill="white"/>
+  <circle cx="305" cy="35" r="5" fill="white"/>
+  <path d="M240 55 Q265 85 290 75 Q310 65 330 85 L330 110 L240 110 Z" fill="#4DA8DA"/>
+  <path d="M330 55 Q345 85 360 75 L360 110 L330 110 Z" fill="#E05A3F"/>
+  <text x="10" y="180" font-family="Arial, sans-serif" font-size="55" font-weight="400" fill="#3E5670">click funnels</text>
 </svg>
