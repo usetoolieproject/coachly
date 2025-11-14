@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 
+// Updated comparison section with colored badges
 const Comparison = () => {
   const competitorTools = [
     { brand: "Skool", category: "Community", cost: 99, color: "#FF6B35" },
