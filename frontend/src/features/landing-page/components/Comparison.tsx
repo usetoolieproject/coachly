@@ -43,10 +43,10 @@ const Comparison = () => {
         {/* Header */}
         <div className="text-center mb-10 sm:mb-16 md:mb-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 text-gray-900">
-            Why Choose Coachly?
+            Replace 5+ Tools with Coachly
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-            One platform vs juggling multiple tools. See how much you'll save.
+            Stop stacking subscriptions. Run your entire coaching business on one platform.
           </p>
         </div>
 
