@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MessageCircle, Clock, Send, CheckCircle } from 'lucide-react';
+import { Send, CheckCircle } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -199,33 +199,6 @@ const Contact = () => {
             </button>
           </form>
         </div>
-
-        {/* Contact Methods */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-purple-50 rounded-2xl p-6 sm:p-8 border border-purple-100">
-            <Mail className="w-8 h-8 text-purple-600 mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Email Us Directly</h2>
-            <p className="text-gray-600 mb-4">
-              Prefer email? Send us a message directly.
-            </p>
-            <a 
-              href="mailto:usecoachly@hotmail.com" 
-              className="text-purple-600 font-semibold hover:text-purple-700 transition-colors"
-            >
-              usecoachly@hotmail.com
-            </a>
-          </div>
-
-          <div className="bg-blue-50 rounded-2xl p-6 sm:p-8 border border-blue-100">
-            <Clock className="w-8 h-8 text-blue-600 mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Response Time</h2>
-            <p className="text-gray-600">
-              We typically respond within 24-48 hours during business days.
-            </p>
-          </div>
-        </div>
-
-
 
         {/* Common Questions */}
         <div className="mb-12">
