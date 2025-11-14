@@ -819,7 +819,7 @@ export const ScreenRecorder: React.FC<ScreenRecorderProps> = ({
   };
 
   /**
-   * Upload video to backend
+   * Upload video to backend (Save to Library)
    */
   const handleUpload = async () => {
     if (!recordedVideoUrl) return;
@@ -833,11 +833,16 @@ export const ScreenRecorder: React.FC<ScreenRecorderProps> = ({
       const response = await fetch(recordedVideoUrl);
       const blob = await response.blob();
 
+      // Create File object from blob
+      const fileName = `recording-${Date.now()}.webm`;
+      const file = new File([blob], fileName, { type: 'video/webm' });
+
       // Create form data
       const formData = new FormData();
-      formData.append('video', blob, `recording-${Date.now()}.webm`);
+      formData.append('video', file);
+      formData.append('title', `Screen Recording ${new Date().toLocaleString()}`);
 
-      // Upload with progress tracking
+      // Upload with progress tracking using XMLHttpRequest
       const xhr = new XMLHttpRequest();
 
       xhr.upload.addEventListener('progress', (event) => {
@@ -853,11 +858,18 @@ export const ScreenRecorder: React.FC<ScreenRecorderProps> = ({
           setIsUploading(false);
           setUploadProgress(100);
           
-          if (onUploadComplete && result.url) {
-            onUploadComplete(result.url);
+          console.log('✅ Video uploaded successfully:', result);
+          alert('Video saved to library successfully!');
+          
+          if (onUploadComplete && result.video?.video_url) {
+            onUploadComplete(result.video.video_url);
           }
+
+          // Clear the recording after successful upload
+          handleDelete();
         } else {
-          throw new Error('Upload failed');
+          const errorData = JSON.parse(xhr.responseText);
+          throw new Error(errorData.error || 'Upload failed');
         }
       });
 
@@ -865,13 +877,28 @@ export const ScreenRecorder: React.FC<ScreenRecorderProps> = ({
         throw new Error('Network error during upload');
       });
 
-      xhr.open('POST', '/api/upload-video');
+      xhr.addEventListener('abort', () => {
+        throw new Error('Upload cancelled');
+      });
+
+      // Get API base URL with credentials
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      xhr.open('POST', `${import.meta.env.VITE_API_BASE_URL || 'https://coachly-backend.onrender.com'}/api/videos/upload`);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.send(formData);
 
     } catch (err: any) {
-      console.error('Upload error:', err);
-      setError('Failed to upload video. Please try again.');
+      console.error('❌ Upload error:', err);
+      
+      if (err.message?.includes('Storage limit exceeded')) {
+        setError('Storage limit exceeded. Please delete some videos to free up space.');
+      } else {
+        setError(err.message || 'Failed to upload video. Please try again.');
+      }
+      
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 

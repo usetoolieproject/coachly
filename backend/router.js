@@ -141,6 +141,13 @@ import {
   removeMyPromo,
 } from './controllers/promoCodesController.js';
 import { getConnectStatus, startOnboarding, resumeOnboarding, disconnectPayouts, getConnectedBalance, getRevenueTimeseries as getConnectRevenueTimeseries } from './controllers/connectController.js';
+import {
+  uploadVideo,
+  getVideos,
+  getStorageStats,
+  deleteVideo,
+  bulkDeleteVideos
+} from './controllers/videoLibraryController.js';
 
 // Configure multer for memory storage - supports multiple files
 const storage = multer.memoryStorage();
@@ -155,6 +162,21 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(new Error('Only image files are allowed'));
+    }
+  }
+});
+
+// Configure multer for video uploads (larger file size limit)
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 2 * 1024 * 1024 * 1024, // 2GB limit per video
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only video files are allowed'));
     }
   }
 });
@@ -636,6 +658,13 @@ const contactFormLimiter = rateLimit({
 });
 
 router.post('/contact', contactFormLimiter, sendContactFormEmail);
+
+// Video Library routes (Instructor only)
+router.post('/videos/upload', authenticateToken, requireRole(['instructor']), checkInstructorPremium, videoUpload.single('video'), uploadVideo);
+router.get('/videos', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getVideos);
+router.get('/videos/storage-stats', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getStorageStats);
+router.delete('/videos/:videoId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, deleteVideo);
+router.post('/videos/bulk-delete', authenticateToken, requireRole(['instructor']), checkInstructorPremium, bulkDeleteVideos);
 
 // Health check
 router.get('/health', (req, res) => {
