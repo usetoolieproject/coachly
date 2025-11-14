@@ -144,10 +144,16 @@ export const validatePromoCode = async (req, res) => {
 
 export const redeemPromoCode = async (req, res) => {
   try {
+    console.log('🎟️ Redeem promo code request:', { user: req.user?.email, body: req.body });
     const instructorId = req.user?.instructors?.[0]?.id;
-    if (!instructorId) return res.status(403).json({ error: 'Instructor required' });
+    if (!instructorId) {
+      console.log('❌ No instructor ID found');
+      return res.status(403).json({ error: 'Instructor required' });
+    }
     const { code, planId } = req.body;
+    console.log('🔍 Looking up promo code:', code);
     const pc = await promoCodesRepo.getByCode(String(code).trim().toUpperCase());
+    console.log('📋 Promo code found:', pc ? { id: pc.id, code: pc.code, isActive: pc.is_active } : 'NOT FOUND');
     if (!pc || !pc.is_active) return res.status(404).json({ error: 'Invalid code' });
     if (pc.expires_at && new Date(pc.expires_at) < new Date()) {
       return res.status(400).json({ error: 'Promo code expired' });

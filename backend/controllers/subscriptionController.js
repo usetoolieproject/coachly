@@ -150,6 +150,91 @@ export const backfillLockedPrices = async (req, res) => {
 // Create subscription checkout session
 export const createSubscriptionCheckout = async (req, res) => {
   try {
+    const instructor = req.user.instructors?.[0];
+    if (!instructor) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
+
+    const { planId, promoCode } = req.body;
+    
+    // Check if there's a 100% discount promo code
+    if (promoCode) {
+      const supabase = getSupabaseClient();
+      const { data: promo } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('code', String(promoCode).trim().toUpperCase())
+        .eq('is_active', true)
+        .single();
+      
+      if (promo && promo.type === 'discount' && promo.discount_percent === 100) {
+        // Create free subscription directly without Stripe
+        const now = new Date();
+        const end = new Date(now);
+        end.setMonth(end.getMonth() + 1); // 1 month free
+        
+        const { error: subError } = await supabase
+          .from('subscriptions')
+          .insert({
+            instructor_id: instructor.id,
+            stripe_subscription_id: `FREE-PROMO-${promo.id}-${Date.now()}`,
+            stripe_customer_id: null,
+            status: 'active',
+            current_period_start: now.toISOString(),
+            current_period_end: end.toISOString(),
+            cancel_at_period_end: false,
+            plan_id: planId || null,
+            original_price_cents: 0,
+            has_promo: true,
+            promo_end_date: end.toISOString(),
+          });
+        
+        if (subError) {
+          console.error('Error creating free subscription:', subError);
+          return res.status(500).json({ error: 'Failed to activate free subscription' });
+        }
+        
+        // Return success with no checkout URL (skip payment)
+        return res.json({ 
+          success: true,
+          skipPayment: true,
+          message: '100% discount applied - subscription activated'
+        });
+      } else if (promo && promo.type === 'duration') {
+        // Handle free duration promos
+        const months = Number(promo.free_months || 1);
+        const now = new Date();
+        const end = new Date(now);
+        end.setMonth(end.getMonth() + months);
+        
+        const { error: subError } = await supabase
+          .from('subscriptions')
+          .insert({
+            instructor_id: instructor.id,
+            stripe_subscription_id: `FREE-DURATION-${promo.id}-${Date.now()}`,
+            stripe_customer_id: null,
+            status: 'active',
+            current_period_start: now.toISOString(),
+            current_period_end: end.toISOString(),
+            cancel_at_period_end: false,
+            plan_id: planId || null,
+            original_price_cents: 0,
+            has_promo: true,
+            promo_end_date: end.toISOString(),
+          });
+        
+        if (subError) {
+          console.error('Error creating free duration subscription:', subError);
+          return res.status(500).json({ error: 'Failed to activate free subscription' });
+        }
+        
+        return res.json({ 
+          success: true,
+          skipPayment: true,
+          message: `${months} month${months > 1 ? 's' : ''} free access activated`
+        });
+      }
+    }
     
     const stripeInstance = getStripe();
     if (!stripeInstance) {
@@ -158,12 +243,8 @@ export const createSubscriptionCheckout = async (req, res) => {
       });
     }
 
-    const instructor = req.user.instructors?.[0];
-    if (!instructor) {
-      return res.status(403).json({ error: 'Instructor access required' });
-    }
-
-    const { planId } = req.body;
+    const { planId: planIdFromBody } = req.body;
+    const planId = planIdFromBody;
     
     if (!planId) {
       return res.status(400).json({ error: 'Plan ID is required' });
