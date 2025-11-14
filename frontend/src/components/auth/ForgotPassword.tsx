@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://coachly-backend.onrender.com'}/auth/forgot-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://coachly-backend.onrender.com'}/api/auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
