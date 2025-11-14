@@ -38,7 +38,7 @@ const Privacy = () => {
         </h1>
         
         <p className="text-sm text-gray-500 mb-8">
-          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          Last updated: 11/14/2025 | This website is operated by Einstein Design Ltd., registered in the United Kingdom.
         </p>
 
         <div className="prose prose-lg max-w-none">

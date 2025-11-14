@@ -38,7 +38,7 @@ const Terms = () => {
         </h1>
         
         <p className="text-sm text-gray-500 mb-8">
-          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          Last updated: 11/14/2025 | This website is operated by Einstein Design Ltd., registered in the United Kingdom.
         </p>
 
         <div className="prose prose-lg max-w-none">
@@ -71,6 +71,16 @@ const Terms = () => {
               <li>Process payments and manage subscriptions</li>
               <li>Track student progress and engagement analytics</li>
             </ul>
+          </section>
+
+          {/* 30-Day Money-Back Guarantee */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">30-Day Money-Back Guarantee</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We offer a 30-day money-back guarantee for new Pro plan subscriptions. If you're not satisfied 
+              within the first 30 days, contact us for a full refund. This guarantee applies only to your first 
+              subscription payment.
+            </p>
           </section>
 
           {/* Account Registration */}
