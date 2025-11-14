@@ -68,7 +68,11 @@ export const requestPasswordReset = async (req, res) => {
 
     if (updateError) {
       console.error('❌ Error storing reset token:', updateError);
-      return res.status(500).json({ error: 'Failed to process password reset request' });
+      console.error('Error details:', JSON.stringify(updateError, null, 2));
+      return res.status(500).json({ 
+        error: 'Failed to process password reset request',
+        details: updateError.message 
+      });
     }
 
     // Construct reset URL
