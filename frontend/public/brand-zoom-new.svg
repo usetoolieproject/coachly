@@ -1,4 +1,5 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <rect width="200" height="200" rx="40" fill="#0B5CFF"/>
-  <text x="100" y="130" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">zoom</text>
+  <rect width="200" height="200" rx="44" fill="#2D8CFF"/>
+  <path d="M45 70 L45 130 L110 130 L110 70 Z" fill="white"/>
+  <path d="M118 95 L118 130 L155 110 L155 85 Z" fill="white"/>
 </svg>
