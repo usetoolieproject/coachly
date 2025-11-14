@@ -103,6 +103,7 @@ import {
 } from './controllers/liveCallsController.js';
 import { createClient } from '@supabase/supabase-js';
 import { authenticateToken, requireRole, checkInstructorPremium } from './middleware/auth.js';
+import { requirePlanFeature } from './middleware/planLimits.js';
 import { createCheckoutSession, createCommunityCheckoutSession, stripeWebhook, platformSubscriptionWebhook, backfillPayments, confirmCheckoutSession } from './controllers/billingController.js';
 import { 
   createSubscriptionCheckout, 
@@ -531,7 +532,7 @@ router.put('/profile', authenticateToken, updateProfile);
 router.post('/profile/picture', authenticateToken, upload.single('profilePicture'), uploadProfilePicture);
 router.put('/profile/password', authenticateToken, changePassword);
 router.put('/profile/email', authenticateToken, changeEmail);
-router.patch('/instructor/subdomain', authenticateToken, requireRole(['instructor']), updateInstructorSubdomain);
+router.patch('/instructor/subdomain', authenticateToken, requireRole(['instructor']), requirePlanFeature('customDomain'), updateInstructorSubdomain);
 
 // Sidebar preference routes
 router.get('/profile/sidebar-preferences', authenticateToken, getSidebarPreferences);
@@ -645,7 +646,7 @@ router.get('/website/loadthemedefault/:type', authenticateToken, loadThemeDefaul
 router.get('/website/public/:subdomain', getPublicWebsiteConfiguration);
 
 // Video Meeting routes (protected)
-router.use('/meetings', authenticateToken, meetingRoutes);
+router.use('/meetings', authenticateToken, requirePlanFeature('meet'), meetingRoutes);
 
 // Contact Form route (public - no authentication required)
 import { sendContactFormEmail } from './controllers/contactController.js';
@@ -659,12 +660,12 @@ const contactFormLimiter = rateLimit({
 
 router.post('/contact', contactFormLimiter, sendContactFormEmail);
 
-// Video Library routes (Instructor only)
-router.post('/videos/upload', authenticateToken, requireRole(['instructor']), checkInstructorPremium, videoUpload.single('video'), uploadVideo);
-router.get('/videos', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getVideos);
-router.get('/videos/storage-stats', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getStorageStats);
-router.delete('/videos/:videoId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, deleteVideo);
-router.post('/videos/bulk-delete', authenticateToken, requireRole(['instructor']), checkInstructorPremium, bulkDeleteVideos);
+// Video Library routes (Instructor only - requires Pro plan)
+router.post('/videos/upload', authenticateToken, requireRole(['instructor']), checkInstructorPremium, requirePlanFeature('videoHosting'), videoUpload.single('video'), uploadVideo);
+router.get('/videos', authenticateToken, requireRole(['instructor']), checkInstructorPremium, requirePlanFeature('videoHosting'), getVideos);
+router.get('/videos/storage-stats', authenticateToken, requireRole(['instructor']), checkInstructorPremium, requirePlanFeature('videoHosting'), getStorageStats);
+router.delete('/videos/:videoId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, requirePlanFeature('videoHosting'), deleteVideo);
+router.post('/videos/bulk-delete', authenticateToken, requireRole(['instructor']), checkInstructorPremium, requirePlanFeature('videoHosting'), bulkDeleteVideos);
 
 // Health check
 router.get('/health', (req, res) => {
