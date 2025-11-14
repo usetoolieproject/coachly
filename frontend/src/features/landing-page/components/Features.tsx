@@ -64,13 +64,6 @@ const features = [
     image: featureClients,
     bgColor: "bg-orange-50",
     link: "#"
-  },
-  {
-    title: "EASY PAYMENTS",
-    description: "Secure payment processing with automatic invoicing and subscription management.",
-    image: featurePayments,
-    bgColor: "bg-emerald-50",
-    link: "#"
   }
 ];
 
