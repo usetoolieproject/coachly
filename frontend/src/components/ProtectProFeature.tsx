@@ -19,9 +19,9 @@ export const ProtectProFeature: React.FC<ProtectProFeatureProps> = ({
   description,
   children
 }) => {
-  const { hasFeature, isLoading } = useSubscriptionPlan();
+  const { hasFeature, isLoading, error } = useSubscriptionPlan();
 
-  // Show loading state while checking subscription
+  // Show loading state while checking subscription (but only briefly)
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -31,6 +31,13 @@ export const ProtectProFeature: React.FC<ProtectProFeatureProps> = ({
         </div>
       </div>
     );
+  }
+
+  // If there's an error loading subscription, allow access (fail open)
+  // This prevents the site from breaking if the subscription API is down
+  if (error) {
+    console.warn('Failed to load subscription status, allowing access:', error);
+    return <>{children}</>;
   }
 
   // Block access if user doesn't have the feature

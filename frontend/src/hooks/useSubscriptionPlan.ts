@@ -51,8 +51,14 @@ export const useSubscriptionPlan = () => {
 
   // Feature availability based on plan
   const hasFeature = (feature: 'screenRecording' | 'videoHosting' | 'meet' | 'customDomain') => {
-    if (!hasActiveSubscription) return false; // No active subscription = no features
-    return isPro; // Pro plan has all features, Basic doesn't have these
+    // If there's an error or no data, fail open (allow access)
+    if (error || !data) return true;
+    
+    // If no active subscription, no Pro features
+    if (!hasActiveSubscription) return false;
+    
+    // Pro plan has all features, Basic doesn't have these specific features
+    return isPro;
   };
 
   return {
