@@ -38,49 +38,49 @@ const Comparison = () => {
   };
 
   return (
-    <section className="py-12 sm:py-16 md:py-24 bg-white" id="why-coachly">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="py-16 sm:py-20 md:py-24 bg-gray-50" id="why-coachly">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="text-center mb-10 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 text-gray-900">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-gray-900">
             Replace 5+ Tools with Coachly
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Stop stacking subscriptions. Run your entire coaching business on one platform.
           </p>
         </div>
 
         {/* Two Column Comparison */}
         <div className="relative">
-          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 mb-8 sm:mb-12">
+          <div className="grid lg:grid-cols-2 gap-6 mb-10">
             {/* Left Column - Other Tools */}
-            <div className="space-y-4">
-              <div className="bg-gray-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-200 shadow-sm">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-gray-900">Other Tools</h3>
-                <p className="text-center text-sm sm:text-base text-gray-600">Multiple subscriptions required</p>
+            <div className="space-y-3">
+              <div className="bg-white rounded-xl p-5 border border-gray-200">
+                <h3 className="text-xl font-bold text-center text-gray-900 mb-1">Other Tools</h3>
+                <p className="text-center text-sm text-blue-600">Multiple subscriptions required</p>
               </div>
               
               {competitorTools.map((tool, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 min-h-[80px] flex items-center"
+                  className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
                 >
-                  <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
-                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center justify-between gap-4 w-full">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
                         <img 
                           src={tool.logo} 
                           alt={`${tool.brand} logo`}
-                          className="w-12 h-12 rounded-xl"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-900">{tool.brand}</h4>
-                        <p className="text-gray-600 text-xs sm:text-sm">{tool.category}</p>
+                        <h4 className="font-semibold text-base text-gray-900">{tool.brand}</h4>
+                        <p className="text-gray-500 text-sm">{tool.category}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="text-base sm:text-lg md:text-xl font-bold text-red-600">${tool.cost}/mo</span>
+                      <span className="text-lg font-bold text-red-600">${tool.cost}/mo</span>
                     </div>
                   </div>
                 </div>
@@ -88,31 +88,31 @@ const Comparison = () => {
             </div>
 
             {/* Right Column - Coachly */}
-            <div className="space-y-4">
-              <div className="bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg">
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white">Replace 5+ tools with Coachly.</h3>
-                <p className="text-center text-sm sm:text-base text-gray-300">Stop stacking subscriptions. Run your entire coaching business on one platform.</p>
+            <div className="space-y-3">
+              <div className="bg-gray-900 rounded-xl p-5">
+                <h3 className="text-xl font-bold text-center text-white mb-2">Replace 5+ tools with Coachly.</h3>
+                <p className="text-center text-sm text-gray-300 leading-relaxed">Stop stacking subscriptions. Run your entire coaching business on one platform.</p>
               </div>
 
               {coachlyFeatures.map((feature, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300 min-h-[80px] flex items-center"
+                  className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
                 >
-                  <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
-                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${feature.isPro ? 'bg-gradient-to-br from-orange-500 to-orange-600' : 'bg-gradient-to-br from-purple-600 to-purple-700'}`}>
-                        <Check className="w-6 h-6 text-white" />
+                  <div className="flex items-center justify-between gap-4 w-full">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 ${feature.isPro ? 'bg-orange-500' : 'bg-purple-600'}`}>
+                        <Check className="w-6 h-6 text-white" strokeWidth={3} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-900">{feature.name}</h4>
+                        <h4 className="font-semibold text-base text-gray-900 mb-0.5">{feature.name}</h4>
                         {feature.description && (
-                          <p className="text-gray-600 text-xs sm:text-sm">{feature.description}</p>
+                          <p className="text-gray-500 text-sm leading-snug">{feature.description}</p>
                         )}
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="text-base sm:text-lg md:text-xl font-bold text-purple-600">Included</span>
+                      <span className="text-base font-bold text-purple-600">Included</span>
                     </div>
                   </div>
                 </div>
@@ -122,8 +122,8 @@ const Comparison = () => {
 
           {/* VS Badge - Centered between columns */}
           <div className="hidden lg:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-white shadow-2xl flex items-center justify-center border-4 border-purple-600/20">
-              <span className="text-3xl sm:text-4xl font-black text-gray-900">VS</span>
+            <div className="w-20 h-20 rounded-full bg-white shadow-xl flex items-center justify-center border-2 border-gray-200">
+              <span className="text-2xl font-black text-gray-900">VS</span>
             </div>
           </div>
         </div>
