@@ -1,4 +1,4 @@
-console.log('Starting backend...')
+console.log('Starting backend with password reset features...')
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
