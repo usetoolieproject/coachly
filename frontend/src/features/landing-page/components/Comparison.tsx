@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 
-// Updated comparison section with colored badges
+// Comparison section - Replace 5+ tools with Coachly
 const Comparison = () => {
   const competitorTools = [
     { brand: "Skool", category: "Community", cost: 99, color: "#FF6B35" },
