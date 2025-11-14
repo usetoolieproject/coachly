@@ -216,6 +216,7 @@ router.get('/auth/instructors', getInstructors);
 // Password Reset routes
 router.post('/auth/forgot-password', authLimiter, requestPasswordReset);
 router.post('/auth/reset-password', authLimiter, resetPassword);
+console.log('✅ Password reset routes registered');
 
 router.get('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getCourses);
 router.post('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, createCourse);
