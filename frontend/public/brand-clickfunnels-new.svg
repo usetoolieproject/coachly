@@ -1,7 +1,9 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <rect width="200" height="200" fill="#2E4057"/>
-  <path d="M 50 60 L 150 60 L 130 100 L 70 100 Z" fill="#4A9EFF"/>
-  <path d="M 75 105 L 125 105 L 110 135 L 90 135 Z" fill="#FF6B6B"/>
-  <rect x="85" y="60" width="4" height="80" fill="#E8E8E8"/>
-  <rect x="111" y="60" width="4" height="80" fill="#E8E8E8"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <rect x="80" y="40" width="240" height="120" rx="10" fill="#2C3E50"/>
+  <circle cx="120" cy="80" r="8" fill="white"/>
+  <circle cx="150" cy="80" r="8" fill="white"/>
+  <circle cx="180" cy="80" r="8" fill="white"/>
+  <path d="M 100 110 Q 120 130 140 110 Q 160 90 180 110 Q 200 130 220 110 Q 240 90 260 110" stroke="#4A9EFF" stroke-width="8" fill="none"/>
+  <path d="M 140 110 Q 160 130 180 110 Q 200 90 220 110" stroke="#E74C3C" stroke-width="8" fill="none"/>
+  <text x="200" y="220" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#2C3E50" text-anchor="middle">click funnels</text>
 </svg>
