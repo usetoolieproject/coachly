@@ -8,6 +8,7 @@ interface VideoItem {
   bunny_video_id: string;
   title: string;
   thumbnail_url: string;
+  video_url: string;
   duration: number;
   file_size: number;
   upload_date: string;
