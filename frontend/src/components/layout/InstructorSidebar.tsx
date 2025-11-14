@@ -17,7 +17,8 @@ import {
   Video,
   Calendar,
   Menu,
-  Disc
+  Disc,
+  Library
 } from 'lucide-react';
 
 interface InstructorSidebarProps {
@@ -67,6 +68,13 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       label: 'Record',
       icon: Disc,
       path: '/coach/record',
+      hasSubmenu: false
+    },
+    {
+      key: 'library',
+      label: 'Video Library',
+      icon: Library,
+      path: '/coach/library',
       hasSubmenu: false
     },
     {

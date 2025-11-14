@@ -36,6 +36,7 @@ import {
   InstructorSocialCalendar,
   InstructorStudentDetails
 } from "./features/instructor";
+import { Library } from "./features/instructor/library";
 import CleanMeetingsDashboard from "./features/instructor/meetings/CleanMeetingsDashboard";
 import MeetingRoom from "./components/meetings/MeetingRoom";
 
@@ -156,6 +157,7 @@ function App() {
               <Route path="dashboard" element={<PremiumGuard><InstructorDashboard /></PremiumGuard>} />
               <Route path="courses" element={<PremiumGuard><ManageCourses /></PremiumGuard>} />
               <Route path="record" element={<PremiumGuard><ScreenRecorderDemo /></PremiumGuard>} />
+              <Route path="library" element={<PremiumGuard><Library /></PremiumGuard>} />
               <Route path="community" element={<PremiumGuard><InstructorCommunity /></PremiumGuard>} />
               <Route path="live-calls" element={<PremiumGuard><InstructorLiveCalls /></PremiumGuard>} />
               <Route path="meetings" element={<PremiumGuard><CleanMeetingsDashboard /></PremiumGuard>} />
