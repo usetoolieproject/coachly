@@ -1,6 +1,6 @@
-const axios = require('axios');
-const FormData = require('form-data');
-const { supabase } = require('../repositories/supabaseClient');
+import axios from 'axios';
+import FormData from 'form-data';
+import { supabase } from '../repositories/supabaseClient.js';
 
 /**
  * Bunny CDN Service
@@ -324,4 +324,4 @@ class BunnyService {
   }
 }
 
-module.exports = new BunnyService();
+export default new BunnyService();

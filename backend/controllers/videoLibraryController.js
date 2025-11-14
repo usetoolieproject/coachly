@@ -1,4 +1,4 @@
-const bunnyService = require('../services/bunnyService');
+import bunnyService from '../services/bunnyService.js';
 
 /**
  * Video Library Controller
@@ -8,7 +8,7 @@ const bunnyService = require('../services/bunnyService');
 /**
  * Upload video to Bunny CDN
  */
-exports.uploadVideo = async (req, res) => {
+export const uploadVideo = async (req, res) => {
   try {
     const instructorId = req.user.instructor.id;
     
@@ -51,7 +51,7 @@ exports.uploadVideo = async (req, res) => {
 /**
  * Get all videos for logged-in instructor
  */
-exports.getVideos = async (req, res) => {
+export const getVideos = async (req, res) => {
   try {
     const instructorId = req.user.instructor.id;
 
@@ -74,7 +74,7 @@ exports.getVideos = async (req, res) => {
 /**
  * Get storage statistics
  */
-exports.getStorageStats = async (req, res) => {
+export const getStorageStats = async (req, res) => {
   try {
     const instructorId = req.user.instructor.id;
 
@@ -97,7 +97,7 @@ exports.getStorageStats = async (req, res) => {
 /**
  * Delete a single video
  */
-exports.deleteVideo = async (req, res) => {
+export const deleteVideo = async (req, res) => {
   try {
     const instructorId = req.user.instructor.id;
     const videoId = req.params.videoId;
@@ -121,7 +121,7 @@ exports.deleteVideo = async (req, res) => {
 /**
  * Bulk delete videos
  */
-exports.bulkDeleteVideos = async (req, res) => {
+export const bulkDeleteVideos = async (req, res) => {
   try {
     const instructorId = req.user.instructor.id;
     const { videoIds } = req.body;
