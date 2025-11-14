@@ -42,11 +42,16 @@ const LandingPage = () => {
       return;
     }
     
+    // Don't redirect if user is null (logged out)
+    if (!user) {
+      return;
+    }
+    
     // Check if user just logged out - don't redirect back to dashboard
     if (typeof window !== 'undefined') {
       const justLoggedOut = sessionStorage.getItem('justLoggedOut');
       if (justLoggedOut === 'true') {
-        // Stay on landing page after logout
+        // Stay on landing page after logout, even if user object still exists
         return;
       }
     }

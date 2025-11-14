@@ -258,22 +258,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoggingOut(true);
     setUser(null);
     
-    // Clear storage immediately
+    // Clear storage immediately and set logout flag FIRST
     if (typeof window !== 'undefined') {
+      // Set logout flag before clearing everything
+      try {
+        sessionStorage.setItem('justLoggedOut', 'true');
+      } catch (e) {}
+      
+      // Now clear other storage
+      const logoutFlag = sessionStorage.getItem('justLoggedOut');
       sessionStorage.clear();
       localStorage.clear();
       
+      // Restore the logout flag
+      if (logoutFlag) {
+        sessionStorage.setItem('justLoggedOut', 'true');
+      }
+      
+      // Get current domain info for comprehensive cookie clearing
+      const currentHost = window.location.hostname.toLowerCase();
+      const parts = currentHost.split('.');
+      if (parts[0] === 'www') parts.shift();
+      const apex = parts.slice(-2).join('.');
+      
       // Clear all cookies immediately before API call
       document.cookie.split(";").forEach(function(c) { 
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        const cookieName = c.split('=')[0].trim();
+        // Clear for current domain
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        // Clear for parent domain
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${apex};`;
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${apex};`;
+        // Clear for subdomain if present
+        if (parts.length > 2) {
+          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${currentHost};`;
+          document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${currentHost};`;
+        }
       });
       
-      // Clear specific cookies
+      // Clear specific cookies with all domain variations
       const cookieNames = ['session', 'auth', 'token', 'user', 'tenant', 'payment_session_id'];
       cookieNames.forEach(name => {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.usecoachly.com;`;
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=usecoachly.com;`;
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${apex};`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${apex};`;
+        if (parts.length > 2) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${currentHost};`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${currentHost};`;
+        }
       });
     }
     
