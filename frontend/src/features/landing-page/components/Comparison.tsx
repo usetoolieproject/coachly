@@ -3,12 +3,12 @@ import { Check } from 'lucide-react';
 // Comparison section - Replace 5+ tools with Coachly
 const Comparison = () => {
   const competitorTools = [
-    { brand: "Skool", category: "Community", cost: 99, color: "#FF6B35" },
-    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, color: "#0099FF" },
-    { brand: "Kajabi", category: "Courses", cost: 149, color: "#FF5733" },
-    { brand: "Loom", category: "Screen Recording", cost: 12, color: "#625DF5" },
-    { brand: "Zoom", category: "Live Coaching", cost: 30, color: "#2D8CFF" },
-    { brand: "Vimeo", category: "Video Hosting", cost: 20, color: "#1AB7EA" },
+    { brand: "Skool", category: "Community", cost: 99, logo: "/brand-skool.svg" },
+    { brand: "ClickFunnels", category: "Sales Funnels", cost: 127, logo: "/brand-clickfunnels.svg" },
+    { brand: "Kajabi", category: "Courses", cost: 149, logo: "/brand-kajabi.svg" },
+    { brand: "Loom", category: "Screen Recording", cost: 12, logo: "/brand-loom.svg" },
+    { brand: "Zoom", category: "Live Coaching", cost: 30, logo: "/brand-zoom.svg" },
+    { brand: "Vimeo", category: "Video Hosting", cost: 20, logo: "/brand-vimeo.svg" },
   ];
 
   const coachlyFeatures = [
@@ -67,10 +67,12 @@ const Comparison = () => {
                 >
                   <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: tool.color }}>
-                        <span className="text-xl font-bold text-white">
-                          {tool.brand.charAt(0)}
-                        </span>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <img 
+                          src={tool.logo} 
+                          alt={`${tool.brand} logo`}
+                          className="w-12 h-12 rounded-xl"
+                        />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="font-bold text-sm sm:text-base md:text-lg text-gray-900">{tool.brand}</h4>
