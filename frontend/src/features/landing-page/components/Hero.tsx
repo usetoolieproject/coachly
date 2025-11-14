@@ -34,7 +34,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed">
-              The all-in-one platform helping coaches build courses, communities and recurring income.
+              Coachly replaces 5–7 tools with one simple dashboard — courses, clients, sessions, payments, and community. No tech headaches.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -59,7 +59,7 @@ const Hero = () => {
                   <span key={star} className="text-yellow-400 text-lg">★</span>
                 ))}
               </div>
-              <span className="text-sm text-gray-600">Trusted by <span className="font-semibold">Coaches & Course Creators</span></span>
+              <span className="text-sm text-gray-600">The all-in-one platform helping coaches build courses, communities and recurring income.</span>
             </div>
 
             {/* Feature Badges */}
