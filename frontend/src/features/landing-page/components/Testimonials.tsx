@@ -34,7 +34,7 @@ const Testimonials = () => {
             <span className="text-purple-600">Worldwide</span>
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-600">
-            Join thousands of successful coaches who have transformed their business with Coachly.
+            The all-in-one platform helping coaches build courses, communities and recurring income.
           </p>
         </div>
         
