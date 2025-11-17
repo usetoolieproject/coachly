@@ -61,12 +61,28 @@ export async function apiFetch<T = any>(path: string, init?: RequestInit & { omi
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   
+  // Merge headers and add Authorization token if available
+  const mergedHeaders: Record<string, string> = {};
+  
+  // Copy existing headers (handle both plain objects and Headers instances)
+  if (rest.headers) {
+    if (rest.headers instanceof Headers) {
+      rest.headers.forEach((value, key) => {
+        mergedHeaders[key] = value;
+      });
+    } else {
+      Object.assign(mergedHeaders, rest.headers);
+    }
+  }
+  
   // Add Authorization header if token exists in localStorage
-  const headers = new Headers(rest.headers || {});
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && !mergedHeaders['Authorization']) {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    if (token && !headers.has('Authorization')) {
-      headers.set('Authorization', `Bearer ${token}`);
+    if (token) {
+      mergedHeaders['Authorization'] = `Bearer ${token}`;
+      console.log('[apiFetch] Adding Authorization header for:', path);
+    } else {
+      console.log('[apiFetch] No token found in storage for:', path);
     }
   }
   
@@ -75,7 +91,7 @@ export async function apiFetch<T = any>(path: string, init?: RequestInit & { omi
       credentials: omitCredentials ? 'omit' : 'include', 
       signal: controller.signal,
       ...rest,
-      headers 
+      headers: mergedHeaders 
     });
     
     clearTimeout(timeoutId);

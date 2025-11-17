@@ -178,11 +178,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(data.user);
       
-      // Store user and timestamp in localStorage for faster subsequent loads
+      // Store user, token, and timestamp in localStorage for faster subsequent loads
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('user', JSON.stringify(data.user));
           localStorage.setItem('lastAuthCheck', Date.now().toString());
+          
+          // Store token if provided
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            console.log('🔑 Token stored from auth check');
+          }
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
         }

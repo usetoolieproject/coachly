@@ -632,6 +632,9 @@ export const getCurrentUser = async (req, res) => {
       }
     }
     
+    // Generate a fresh token for the user
+    const token = generateToken(req.user.id, req.user.role);
+    
     res.json({
       user: {
         id: req.user.id,
@@ -649,7 +652,8 @@ export const getCurrentUser = async (req, res) => {
           premium_ends: req.user.instructors[0].premium_ends
         } : null,
         student: studentData
-      }
+      },
+      token // Include token for frontend to store
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
