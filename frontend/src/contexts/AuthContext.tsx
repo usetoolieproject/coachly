@@ -137,26 +137,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
       
-      // Check if user just logged out - skip auth check
-      const justLoggedOut = sessionStorage.getItem('justLoggedOut');
-      if (justLoggedOut === 'true') {
-        console.log('🚪 Just logged out, skipping auth check and staying logged out');
-        // DON'T remove the flag yet - keep it for the landing page check
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-    }
-    
-    // Double-check logout state right before API call (safety net)
-    if (sessionStorage.getItem('justLoggedOut') === 'true') {
-      console.log('🚪 Double-check: Still logged out, aborting auth API call');
+    // Check if user just logged out - skip auth check
+    const justLoggedOut = sessionStorage.getItem('justLoggedOut');
+    if (justLoggedOut === 'true') {
+      console.log('🚪 Just logged out, skipping auth check and staying logged out');
+      // DON'T remove the flag yet - keep it for the landing page check
       setUser(null);
       setLoading(false);
       return;
     }
     
+    // Check if user logged out recently (within last 30 seconds) using localStorage
+    // This persists across page reloads and prevents immediate re-authentication
     try {
+      const logoutTimestamp = localStorage.getItem('logoutTimestamp');
+      if (logoutTimestamp) {
+        const logoutTime = parseInt(logoutTimestamp);
+        const now = Date.now();
+        if (now - logoutTime < 30000) { // 30 seconds
+          console.log('🚪 Recently logged out, staying logged out');
+          setUser(null);
+          setLoading(false);
+          return;
+        } else {
+          // Clear old logout timestamp
+          localStorage.removeItem('logoutTimestamp');
+        }
+      }
+    } catch (e) {}
+  }
+  
+  // Double-check logout state right before API call (safety net)
+  if (sessionStorage.getItem('justLoggedOut') === 'true') {
+    console.log('🚪 Double-check: Still logged out, aborting auth API call');
+    setUser(null);
+    setLoading(false);
+    return;
+  }    try {
       const data = await apiFetch('/auth/me', { timeout: 10000 });
       console.log('✅ Auth check success:', data?.user?.email);
       lastAuthCheck.current = Date.now();
@@ -309,14 +326,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         sessionStorage.setItem('justLoggedOut', 'true');
       } catch (e) {}
       
+      // Set logout timestamp in localStorage (persists across page loads)
+      try {
+        localStorage.setItem('logoutTimestamp', Date.now().toString());
+      } catch (e) {}
+      
       // Now clear other storage
       const logoutFlag = sessionStorage.getItem('justLoggedOut');
+      const logoutTime = localStorage.getItem('logoutTimestamp');
       sessionStorage.clear();
       localStorage.clear();
       
-      // Restore the logout flag
+      // Restore the logout flag and timestamp
       if (logoutFlag) {
         sessionStorage.setItem('justLoggedOut', 'true');
+      }
+      if (logoutTime) {
+        localStorage.setItem('logoutTimestamp', logoutTime);
       }
       
       // Get current domain info for comprehensive cookie clearing
