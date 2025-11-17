@@ -379,8 +379,16 @@ export default function CleanStudentLogin() {
                   <p className="text-blue-800 text-xs sm:text-sm font-medium mb-2">
                     🎓 Don't have a student account?
                   </p>
-                  <p className="text-blue-700 text-xs">
-                    Students can only create accounts through their instructor's community page. Ask your instructor for their community link!
+                  <p className="text-blue-700 text-xs mb-2">
+                    To create a student account:
+                  </p>
+                  <ol className="text-blue-700 text-xs text-left list-decimal list-inside space-y-1">
+                    <li>Ask your instructor for their community website link (e.g., instructorname.usecoachly.com)</li>
+                    <li>Visit their website and click "Join" or "Sign Up"</li>
+                    <li>Create your account there to get automatically enrolled</li>
+                  </ol>
+                  <p className="text-blue-600 text-xs mt-3 italic">
+                    Or ask your instructor to create an account for you
                   </p>
                 </div>
                 
