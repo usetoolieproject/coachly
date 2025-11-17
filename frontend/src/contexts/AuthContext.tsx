@@ -429,20 +429,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // SCENARIO 3: Instructor logout - redirect to apex
         if (userRole === 'instructor') {
           const cacheBuster = Date.now();
-          window.location.replace(`https://${apex}/?logout=${cacheBuster}`);
+          const targetUrl = `https://${apex}/?logout=${cacheBuster}`;
+          console.log('🚪 Instructor logout: Redirecting to', targetUrl);
+          window.location.href = targetUrl; // Use href instead of replace for better compatibility
+          return; // Stop execution
         }
         // SCENARIO 2: Student logout - redirect to subdomain login page
         else if (userRole === 'student' && parts.length > 2) {
           const cacheBuster = Date.now();
-          window.location.replace(`/login?logout=${cacheBuster}`);
+          console.log('🚪 Student logout: Redirecting to login');
+          window.location.href = `/login?logout=${cacheBuster}`;
+          return; // Stop execution
         }
         // Fallback - redirect to apex
         else {
           const cacheBuster = Date.now();
-          window.location.replace(`https://${apex}/?logout=${cacheBuster}`);
+          const targetUrl = `https://${apex}/?logout=${cacheBuster}`;
+          console.log('🚪 Fallback logout: Redirecting to', targetUrl);
+          window.location.href = targetUrl;
+          return; // Stop execution
         }
       } catch (error) {
-        window.location.href = '/';
+        console.error('🚪 Logout error, redirecting to root:', error);
+        const currentHost = window.location.hostname.toLowerCase();
+        const parts = currentHost.split('.');
+        if (parts[0] === 'www') parts.shift();
+        const apex = parts.slice(-2).join('.');
+        // Try to redirect to apex even on error
+        window.location.href = `https://${apex}`;
       }
     }
   };
