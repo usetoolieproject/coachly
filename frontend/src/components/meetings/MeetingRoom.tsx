@@ -166,7 +166,15 @@ const MeetingRoom: React.FC = () => {
 
       // Setup WebRTC callbacks
       webrtcManager.onRemoteStream = (socketId: string, stream: MediaStream) => {
-        console.log('Got remote stream from:', socketId);
+        console.log('🎬 Got remote stream from:', socketId);
+        console.log('🎬 Stream details:', {
+          id: stream.id,
+          active: stream.active,
+          videoTracks: stream.getVideoTracks().length,
+          audioTracks: stream.getAudioTracks().length,
+          videoTrackEnabled: stream.getVideoTracks()[0]?.enabled,
+          audioTrackEnabled: stream.getAudioTracks()[0]?.enabled
+        });
         setRemoteStreams(prev => new Map(prev).set(socketId, stream));
       };
 
@@ -314,8 +322,18 @@ const MeetingRoom: React.FC = () => {
    * Attach remote stream to video element
    */
   useEffect(() => {
+    console.log('🔄 useEffect triggered - remoteStreams count:', remoteStreams.size);
+    console.log('🔄 Available video elements:', remoteVideosRef.current.size);
+    
     remoteStreams.forEach(async (stream, socketId) => {
       const videoElement = remoteVideosRef.current.get(socketId);
+      console.log(`📺 Processing stream for ${socketId}:`, {
+        hasVideoElement: !!videoElement,
+        currentSrcObject: videoElement?.srcObject,
+        newStream: stream,
+        needsUpdate: videoElement && videoElement.srcObject !== stream
+      });
+      
       if (videoElement && videoElement.srcObject !== stream) {
         console.log('📺 Setting remote stream for:', socketId);
         videoElement.srcObject = stream;
@@ -326,6 +344,8 @@ const MeetingRoom: React.FC = () => {
         } catch (playError) {
           console.error('❌ Error playing remote video:', playError);
         }
+      } else if (!videoElement) {
+        console.warn('⚠️ No video element found for socketId:', socketId);
       }
     });
   }, [remoteStreams]);
@@ -599,7 +619,16 @@ const MeetingRoom: React.FC = () => {
                 <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
                   <video
                     ref={(el) => {
-                      if (el) remoteVideosRef.current.set(socketId, el);
+                      if (el) {
+                        console.log('🎥 Thumbnail video element mounted for socketId:', socketId);
+                        remoteVideosRef.current.set(socketId, el);
+                        // Try to set stream immediately if available
+                        if (stream && el.srcObject !== stream) {
+                          console.log('🎥 Setting stream immediately on thumbnail mount for:', socketId);
+                          el.srcObject = stream;
+                          el.play().catch(err => console.error('Error playing thumbnail on mount:', err));
+                        }
+                      }
                     }}
                     autoPlay
                     playsInline
@@ -660,13 +689,22 @@ const MeetingRoom: React.FC = () => {
             </div>
 
             {/* Remote Videos */}
-            {Array.from(remoteStreams.entries()).map(([socketId]) => {
+            {Array.from(remoteStreams.entries()).map(([socketId, stream]) => {
               const participant = participants.get(socketId);
               return (
                 <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden">
                   <video
                     ref={(el) => {
-                      if (el) remoteVideosRef.current.set(socketId, el);
+                      if (el) {
+                        console.log('🎥 Video element mounted for socketId:', socketId);
+                        remoteVideosRef.current.set(socketId, el);
+                        // Try to set stream immediately if available
+                        if (stream && el.srcObject !== stream) {
+                          console.log('🎥 Setting stream immediately on mount for:', socketId);
+                          el.srcObject = stream;
+                          el.play().catch(err => console.error('Error playing on mount:', err));
+                        }
+                      }
                     }}
                     autoPlay
                     playsInline
