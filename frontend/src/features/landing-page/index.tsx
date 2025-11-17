@@ -64,31 +64,33 @@ const LandingPage = () => {
     }
     
     if (user) {
+      // On apex domain (usecoachly.com): instructors manage their business here
+      // Students should not be on apex
       if (typeof window !== 'undefined') {
         const currentHost = window.location.hostname.toLowerCase();
         const parts = currentHost.split('.');
         if (parts[0] === 'www') parts.shift();
         
-        if (parts.length <= 2 && user.role === 'instructor' && user.instructor?.subdomain) {
-          const slug = user.instructor.subdomain;
-          const apex = parts.join('.');
-          const desiredHost = `${slug}.${apex}`;
-          window.location.replace(`https://${desiredHost}/coach/dashboard`);
-          return;
-        }
-        
-        if (parts.length <= 2 && user.role === 'student') {
-          navigate('/student/dashboard', { replace: true });
-          return;
+        // If on apex domain
+        if (parts.length <= 2) {
+          if (user.role === 'instructor') {
+            // Instructors stay on apex - redirect to their dashboard
+            navigate('/coach/dashboard', { replace: true });
+            return;
+          } else if (user.role === 'student') {
+            // Students shouldn't be on apex
+            navigate('/login', { replace: true });
+            return;
+          }
         }
       }
 
       switch (user.role) {
         case 'instructor':
-          navigate('/coach', { replace: true });
+          navigate('/coach/dashboard', { replace: true });
           break;
         case 'student':
-          navigate('/student', { replace: true });
+          navigate('/login', { replace: true });
           break;
         case 'admin':
           navigate('/admin', { replace: true });

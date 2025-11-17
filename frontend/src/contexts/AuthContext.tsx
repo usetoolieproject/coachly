@@ -426,18 +426,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         }
         
-        // SCENARIO 3: Instructor logout - redirect to apex
+        // SCENARIO 1: Instructor logout
         if (userRole === 'instructor') {
           const cacheBuster = Date.now();
+          // Instructors always go to apex domain to see landing page
           const targetUrl = `https://${apex}/?logout=${cacheBuster}`;
           console.log('🚪 Instructor logout: Redirecting to', targetUrl);
-          window.location.href = targetUrl; // Use href instead of replace for better compatibility
+          window.location.href = targetUrl;
           return; // Stop execution
         }
-        // SCENARIO 2: Student logout - redirect to subdomain login page
-        else if (userRole === 'student' && parts.length > 2) {
+        // SCENARIO 2: Student logout - stay on subdomain and redirect to login
+        else if (userRole === 'student') {
           const cacheBuster = Date.now();
-          console.log('🚪 Student logout: Redirecting to login');
+          console.log('🚪 Student logout: Redirecting to subdomain login');
+          // Students stay on their instructor's subdomain
           window.location.href = `/login?logout=${cacheBuster}`;
           return; // Stop execution
         }

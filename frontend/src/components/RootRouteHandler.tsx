@@ -52,29 +52,27 @@ export const RootRouteHandler: React.FC = () => {
   const isApex = !slug;
   
   if (isApex) {
-    // APEX DOMAIN LOGIC
+    // APEX DOMAIN LOGIC (usecoachly.com)
+    // This is where instructors manage their business
     if (user) {
       // User is authenticated on apex
-      if (user.role === 'instructor' && user.instructor?.subdomain) {
-        // Redirect instructor to their subdomain
-        const subdomain = user.instructor.subdomain;
-        const currentHost = window.location.hostname.toLowerCase();
-        const parts = currentHost.split('.');
-        if (parts[0] === 'www') parts.shift();
-        const apex = parts.slice(-2).join('.');
-        const targetUrl = `https://${subdomain}.${apex}/coach/dashboard`;
-        window.location.replace(targetUrl);
-        return null;
+      if (user.role === 'instructor') {
+        // Instructors stay on apex to manage their business
+        return <Navigate to="/coach/dashboard" replace />;
       } else if (user.role === 'student') {
-        // Student on apex - redirect to student dashboard
-        return <Navigate to="/student/dashboard" replace />;
+        // Students shouldn't be on apex - redirect to their instructor's subdomain
+        if (user.student?.instructor_id) {
+          // Need to get instructor's subdomain - for now redirect to login
+          return <Navigate to="/login" replace />;
+        }
+        return <Navigate to="/login" replace />;
       } else if (user.role === 'admin') {
         // Admin on apex - redirect to admin dashboard
         return <Navigate to="/admin/overview" replace />;
       }
     }
     
-    // Unauthenticated on apex - show landing page
+    // Unauthenticated on apex - show landing page (instructor signup/login)
     return <LandingPage />;
   } else {
     // SUBDOMAIN LOGIC
