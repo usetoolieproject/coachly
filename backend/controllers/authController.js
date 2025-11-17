@@ -517,6 +517,8 @@ export const login = async (req, res) => {
       }
     }
     
+    console.log('✅ Login successful, sending token:', token ? token.substring(0, 20) + '...' : 'NO TOKEN');
+    
     res.json({
     message: 'Login successful',
     token,
