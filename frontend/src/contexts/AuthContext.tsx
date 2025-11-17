@@ -187,7 +187,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Store token if provided
           if (data.token) {
             localStorage.setItem('token', data.token);
-            console.log('🔑 Token stored from auth check');
+            console.log('🔑 Token stored from auth check:', data.token.substring(0, 20) + '...');
+          } else {
+            console.warn('⚠️ No token in auth check response!');
           }
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
@@ -266,6 +268,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Store token if provided for Authorization header fallback
           if (data.token) {
             localStorage.setItem('token', data.token);
+            console.log('🔑 Token stored from login:', data.token.substring(0, 20) + '...');
+          } else {
+            console.warn('⚠️ No token in login response!');
           }
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
