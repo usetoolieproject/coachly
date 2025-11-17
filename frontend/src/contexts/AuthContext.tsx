@@ -147,22 +147,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
     
-    // Check if user logged out recently (within last 30 seconds) using localStorage
-    // This persists across page reloads and prevents immediate re-authentication
+    // Check if user has logged out (permanent until they log in again)
+    // This persists across page reloads and prevents automatic re-authentication
     try {
       const logoutTimestamp = localStorage.getItem('logoutTimestamp');
       if (logoutTimestamp) {
-        const logoutTime = parseInt(logoutTimestamp);
-        const now = Date.now();
-        if (now - logoutTime < 30000) { // 30 seconds
-          console.log('🚪 Recently logged out, staying logged out');
-          setUser(null);
-          setLoading(false);
-          return;
-        } else {
-          // Clear old logout timestamp
-          localStorage.removeItem('logoutTimestamp');
-        }
+        console.log('🚪 User logged out, staying logged out until explicit login');
+        setUser(null);
+        setLoading(false);
+        return;
       }
     } catch (e) {}
   }
@@ -218,6 +211,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string, role?: string) => {
     try {
+      // Clear logout timestamp on explicit login
+      try {
+        localStorage.removeItem('logoutTimestamp');
+        sessionStorage.removeItem('justLoggedOut');
+      } catch (e) {}
+      
       console.log('🔑 Attempting login...');
       const data = await apiFetch('/auth/login', {
         method: 'POST',
