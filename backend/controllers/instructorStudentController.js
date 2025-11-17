@@ -443,3 +443,58 @@ export const createStudent = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+/**
+ * Delete a student
+ * DELETE /api/instructor/students/:studentId
+ */
+export const deleteStudent = async (req, res) => {
+  try {
+    const supabase = getSupabaseClient();
+    const instructorId = req.user.instructorId;
+    const { studentId } = req.params;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Only instructors can delete students' });
+    }
+
+    // Verify the student belongs to this instructor
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('user_id')
+      .eq('id', studentId)
+      .eq('instructor_id', instructorId)
+      .single();
+
+    if (studentError || !student) {
+      return res.status(404).json({ error: 'Student not found or does not belong to you' });
+    }
+
+    // Delete the student record (this will cascade delete related records due to foreign keys)
+    const { error: deleteStudentError } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', studentId);
+
+    if (deleteStudentError) {
+      console.error('Error deleting student record:', deleteStudentError);
+      return res.status(500).json({ error: 'Failed to delete student record' });
+    }
+
+    // Delete the user account
+    const { error: deleteUserError } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', student.user_id);
+
+    if (deleteUserError) {
+      console.error('Error deleting user account:', deleteUserError);
+      return res.status(500).json({ error: 'Failed to delete user account' });
+    }
+
+    res.json({ message: 'Student deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

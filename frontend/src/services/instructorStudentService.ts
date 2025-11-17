@@ -81,4 +81,10 @@ export const instructorStudentService = {
   async getStudentDetails(studentId: string): Promise<StudentDetails> {
     return await apiFetch(`/instructor/students/${studentId}`);
   },
+
+  async deleteStudent(studentId: string): Promise<{ message: string }> {
+    return await apiFetch(`/instructor/students/${studentId}`, {
+      method: 'DELETE',
+    });
+  },
 };

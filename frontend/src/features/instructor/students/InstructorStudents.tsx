@@ -4,11 +4,13 @@ import { StudentsHeader, StudentsFilters, StudentsStats, StudentsTable } from '.
 import { useStudents } from './hooks/useStudents';
 import type { Student } from './types';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { instructorStudentService } from '../../../services/instructorStudentService';
 
 const InstructorStudents: React.FC = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
   const { students, isLoading, isRefreshing, refresh, filtered, search, setSearch, handleSort } = useStudents();
+  const [deleting, setDeleting] = React.useState<string | null>(null);
 
   const exportToCSV = () => {
     const headers = [
@@ -48,6 +50,29 @@ const InstructorStudents: React.FC = () => {
     window.print();
   };
 
+  const handleDelete = async (studentId: string) => {
+    const student = filtered.find(s => s.id === studentId);
+    if (!student) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${student.firstName} ${student.lastName}? This action cannot be undone and will permanently remove the student and all their data.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeleting(studentId);
+      await instructorStudentService.deleteStudent(studentId);
+      await refresh(); // Refresh the list after deletion
+      alert('Student deleted successfully');
+    } catch (error: any) {
+      console.error('Error deleting student:', error);
+      alert(error.message || 'Failed to delete student. Please try again.');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   // Skeleton when first loading
   if (isLoading) {
     return (
@@ -79,9 +104,14 @@ const InstructorStudents: React.FC = () => {
       <StudentsFilters value={search} onChange={setSearch} />
 
       {/* Students Table */}
-      <StudentsTable rows={filtered} onSort={handleSort} onView={(id)=>{
-        navigate(`/coach/students/${id}`);
-      }} />
+      <StudentsTable 
+        rows={filtered} 
+        onSort={handleSort} 
+        onView={(id)=>{
+          navigate(`/coach/students/${id}`);
+        }}
+        onDelete={handleDelete}
+      />
 
       {/* Empty State */}
       {filtered.length === 0 && (

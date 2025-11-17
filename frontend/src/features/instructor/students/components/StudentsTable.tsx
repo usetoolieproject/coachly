@@ -1,12 +1,12 @@
 import React from 'react';
-import { ArrowUpDown, Eye, Download } from 'lucide-react';
+import { ArrowUpDown, Eye, Download, Trash2 } from 'lucide-react';
 import { ProfilePicture } from '../../../../components/shared';
 import type { Student } from '../types';
 import { useTheme } from '../../../../contexts/ThemeContext';
 import Pagination from '../../../../components/shared/ui/Pagination';
 import { RowsPerPageSelect } from '../../../../components/shared/ui/RowsPerPageSelect';
 
-export function StudentsTable({ rows, onSort, onView }: { rows: Student[]; onSort: (f: keyof Student)=>void; onView: (id: string)=>void; }) {
+export function StudentsTable({ rows, onSort, onView, onDelete }: { rows: Student[]; onSort: (f: keyof Student)=>void; onView: (id: string)=>void; onDelete?: (id: string)=>void; }) {
   const { isDarkMode } = useTheme();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(7);
@@ -88,6 +88,11 @@ export function StudentsTable({ rows, onSort, onView }: { rows: Student[]; onSor
                         <button onClick={() => alert('Individual download coming soon!')} className={`p-1 rounded ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`} title="Download Data">
                           <Download className="h-4 w-4" />
                         </button>
+                        {onDelete && (
+                          <button onClick={() => onDelete(student.id)} className={`p-1 rounded ${isDarkMode ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' : 'text-red-600 hover:text-red-900 hover:bg-red-50'}`} title="Delete Student">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -118,6 +123,11 @@ export function StudentsTable({ rows, onSort, onView }: { rows: Student[]; onSor
                 <button onClick={() => alert('Individual download coming soon!')} className={`p-2 rounded-lg ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`} title="Download Data">
                   <Download className="h-4 w-4" />
                 </button>
+                {onDelete && (
+                  <button onClick={() => onDelete(student.id)} className={`p-2 rounded-lg ${isDarkMode ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' : 'text-red-600 hover:text-red-900 hover:bg-red-50'}`} title="Delete Student">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
 

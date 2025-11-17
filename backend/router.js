@@ -77,7 +77,8 @@ import {
 import {
   getInstructorStudents,
   getStudentDetails,
-  createStudent
+  createStudent,
+  deleteStudent
 } from './controllers/instructorStudentController.js';
 import { 
   getProfile,
@@ -516,6 +517,7 @@ router.post('/instructor/about-page/upload-banner', authenticateToken, requireRo
 router.get('/instructor/students', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getInstructorStudents);
 router.post('/instructor/students', authenticateToken, requireRole(['instructor']), checkInstructorPremium, createStudent);
 router.get('/instructor/students/:studentId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getStudentDetails);
+router.delete('/instructor/students/:studentId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, deleteStudent);
 
 router.get('/instructor/dashboard-analytics', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getDashboardAnalytics);
 router.get('/instructor/revenue-timeseries', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getDashboardRevenueTimeseries);
