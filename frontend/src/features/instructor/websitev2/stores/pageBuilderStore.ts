@@ -322,6 +322,12 @@ export const usePageBuilderStore = create<PageBuilderState>()(
           } else if (currentState.selectedTheme === 'fitness-trainer') {
             useFitnessTrainerStore.setState({ isPublishing: false });
           } else {
+            useStartFromScratchStore.setState({ isPublishing: false });
+          }
+          
+          set({ isPublishing: false }, false, 'setIsPublishing');
+          
+          return false;
         } catch (error) {
           console.error('[pageBuilderStore] Unpublish error:', error);
           // Reset publishing state on error
@@ -330,12 +336,6 @@ export const usePageBuilderStore = create<PageBuilderState>()(
             useTheme1Store.setState({ isPublishing: false });
           } else if (currentState.selectedTheme === 'fitness-trainer') {
             useFitnessTrainerStore.setState({ isPublishing: false });
-          } else {
-            useStartFromScratchStore.setState({ isPublishing: false });
-          }
-          
-          set({ isPublishing: false }, false, 'setIsPublishing');
-          return false;rainerStore.setState({ isPublishing: false });
           } else {
             useStartFromScratchStore.setState({ isPublishing: false });
           }
