@@ -24,6 +24,7 @@ export interface PageBuilderState {
   saveWebsiteConfiguration: () => Promise<boolean>;
   loadWebsiteConfiguration: () => Promise<boolean>;
   publishWebsite: () => Promise<boolean>;
+  unpublishWebsite: () => Promise<boolean>;
 }
 
 const initialState = {
@@ -252,6 +253,88 @@ export const usePageBuilderStore = create<PageBuilderState>()(
           return false;
         }
       },
+
+      unpublishWebsite: async () => {
+        const currentState = get();
+        
+        // Set publishing state (reuse isPublishing for unpublishing)
+        if (currentState.selectedTheme === 'professional-coach') {
+          useTheme1Store.setState({ isPublishing: true });
+        } else if (currentState.selectedTheme === 'fitness-trainer') {
+          useFitnessTrainerStore.setState({ isPublishing: true });
+        } else {
+          useStartFromScratchStore.setState({ isPublishing: true });
+        }
+        
+        set({ isPublishing: true }, false, 'setIsPublishing');
+        try {
+          const theme1Store = useTheme1Store.getState();
+          const startFromScratchStore = useStartFromScratchStore.getState();
+          const fitnessTrainerStore = useFitnessTrainerStore.getState();
+          
+          // Get data from appropriate store
+          let storeState;
+          if (currentState.selectedTheme === 'professional-coach') {
+            storeState = theme1Store;
+          } else if (currentState.selectedTheme === 'fitness-trainer') {
+            storeState = fitnessTrainerStore;
+          } else {
+            storeState = startFromScratchStore;
+          }
+          
+          // Save configuration with isPublished = false
+          const config: WebsiteConfiguration = {
+            themeId: currentState.selectedTheme,
+            addedSections: storeState.addedSections,
+            sectionData: storeState.sectionData,
+            selectedPageType: storeState.selectedPageType,
+            isMobileView: storeState.isMobileView,
+            isPublished: false, // Set to false to unpublish
+          };
+          
+          const result = await websiteService.saveWebsiteConfiguration(config);
+          if (result.success) {
+            // Update the theme-specific store
+            if (currentState.selectedTheme === 'professional-coach') {
+              useTheme1Store.setState({ isPublished: false, isPublishing: false });
+            } else if (currentState.selectedTheme === 'fitness-trainer') {
+              useFitnessTrainerStore.setState({ isPublished: false, isPublishing: false });
+            } else {
+              useStartFromScratchStore.setState({ isPublished: false, isPublishing: false });
+            }
+            
+            set({ isPublishing: false }, false, 'unpublishWebsite');
+            
+            return true;
+          }
+          
+          // Reset publishing state on failure
+          if (currentState.selectedTheme === 'professional-coach') {
+            useTheme1Store.setState({ isPublishing: false });
+          } else if (currentState.selectedTheme === 'fitness-trainer') {
+            useFitnessTrainerStore.setState({ isPublishing: false });
+          } else {
+            useStartFromScratchStore.setState({ isPublishing: false });
+          }
+          
+          set({ isPublishing: false }, false, 'setIsPublishing');
+          
+          return false;
+        } catch (error) {
+          // Reset publishing state on error
+          const currentState = get();
+          if (currentState.selectedTheme === 'professional-coach') {
+            useTheme1Store.setState({ isPublishing: false });
+          } else if (currentState.selectedTheme === 'fitness-trainer') {
+            useFitnessTrainerStore.setState({ isPublishing: false });
+          } else {
+            useStartFromScratchStore.setState({ isPublishing: false });
+          }
+          
+          set({ isPublishing: false }, false, 'setIsPublishing');
+          return false;
+        }
+      },
     }),
     {
       name: 'page-builder-store',
@@ -431,6 +514,7 @@ export const useSetSelectedTheme = () => usePageBuilderStore((state) => state.se
 export const useSaveWebsiteConfiguration = () => usePageBuilderStore((state) => state.saveWebsiteConfiguration);
 export const useLoadWebsiteConfiguration = () => usePageBuilderStore((state) => state.loadWebsiteConfiguration);
 export const usePublishWebsite = () => usePageBuilderStore((state) => state.publishWebsite);
+export const useUnpublishWebsite = () => usePageBuilderStore((state) => state.unpublishWebsite);
 export const useIsSaving = () => usePageBuilderStore((state) => state.isSaving);
 export const useIsPublishing = () => usePageBuilderStore((state) => state.isPublishing);
 export const useSelectedTheme = () => usePageBuilderStore((state) => state.selectedTheme);

@@ -2,6 +2,7 @@ import React from 'react';
 import { Globe, Copy, ExternalLink } from 'lucide-react';
 import { WebsiteUtils } from '../utils/websiteUtils';
 import { useTheme } from '../../../../contexts/ThemeContext';
+import { useAuth } from '../../../../contexts/AuthContext';
 
 interface PublishedStatusProps {
   isPublished: boolean;
@@ -9,6 +10,7 @@ interface PublishedStatusProps {
 
 export const PublishedStatus: React.FC<PublishedStatusProps> = ({ isPublished }) => {
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
   
   if (!isPublished) return null;
 
@@ -55,10 +57,10 @@ export const PublishedStatus: React.FC<PublishedStatusProps> = ({ isPublished })
                 ? 'bg-gray-800 border-green-700 text-green-300' 
                 : 'bg-white border-green-200 text-green-800'
             }`}>
-              {WebsiteUtils.getWebsiteUrl()}
+              {WebsiteUtils.getWebsiteUrl(user)}
             </div>
             <button
-              onClick={WebsiteUtils.copyWebsiteUrl}
+              onClick={() => WebsiteUtils.copyWebsiteUrl(user)}
               className={`p-2 rounded-lg transition-colors ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
@@ -69,7 +71,7 @@ export const PublishedStatus: React.FC<PublishedStatusProps> = ({ isPublished })
               <Copy className="w-4 h-4" />
             </button>
             <button
-              onClick={WebsiteUtils.openWebsiteUrl}
+              onClick={() => WebsiteUtils.openWebsiteUrl(user)}
               className={`p-2 rounded-lg transition-colors ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 

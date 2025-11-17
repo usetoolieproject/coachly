@@ -5,7 +5,7 @@ import { BuilderPreview } from './BuilderPreview';
 import { EditorFactory } from '../factories/EditorFactory';
 import { useTheme } from '../../../../contexts/ThemeContext';
 import { Theme } from '../types';
-import { usePageBuilderStoreState, useSetIsMobileView, useInitializeTheme1, useInitializeStartFromScratch, useInitializeFitnessTrainer, useSaveWebsiteConfiguration, useLoadWebsiteConfiguration, usePublishWebsite, useSetSelectedTheme, useSelectedTheme } from '../stores/pageBuilderStore';
+import { usePageBuilderStoreState, useSetIsMobileView, useInitializeTheme1, useInitializeStartFromScratch, useInitializeFitnessTrainer, useSaveWebsiteConfiguration, useLoadWebsiteConfiguration, usePublishWebsite, useUnpublishWebsite, useSetSelectedTheme, useSelectedTheme } from '../stores/pageBuilderStore';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { Theme1Preview } from '../themes/theme1/Theme1Preview';
 import { useDesignColors } from '../hooks/useDesignColors';
@@ -51,6 +51,7 @@ export const BuilderInterface: React.FC<BuilderInterfaceProps> = ({
   const initializeFitnessTrainer = useInitializeFitnessTrainer();
   const loadWebsiteConfiguration = useLoadWebsiteConfiguration();
   const publishWebsite = usePublishWebsite();
+  const unpublishWebsite = useUnpublishWebsite();
   
   // Update Zustand store's selectedTheme and initialize when theme changes
   const setSelectedTheme = useSetSelectedTheme();
@@ -113,6 +114,16 @@ export const BuilderInterface: React.FC<BuilderInterfaceProps> = ({
     } catch (error) {
     }
   }, [publishWebsite]);
+
+  const handleUnpublish = useCallback(async () => {
+    try {
+      const success = await unpublishWebsite();
+      if (success) {
+      } else {
+      }
+    } catch (error) {
+    }
+  }, [unpublishWebsite]);
 
   // Helper function to get website URL with user data
   const getWebsiteUrl = useCallback(() => {
@@ -328,20 +339,33 @@ export const BuilderInterface: React.FC<BuilderInterfaceProps> = ({
               )}
               <span>{isSaving ? 'Saving...' : 'Save'}</span>
             </button>
-            <button
-              onClick={handlePublish}
-              disabled={isSaving || isPublishing}
-              className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
-            >
-              {isPublishing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : isPublished ? (
-                <CheckCircle className="w-4 h-4" />
-              ) : (
-                <Globe className="w-4 h-4" />
-              )}
-              <span>{isPublishing ? 'Publishing...' : isPublished ? 'Published' : 'Publish'}</span>
-            </button>
+            {!isPublished ? (
+              <button
+                onClick={handlePublish}
+                disabled={isSaving || isPublishing}
+                className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+              >
+                {isPublishing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Globe className="w-4 h-4" />
+                )}
+                <span>{isPublishing ? 'Publishing...' : 'Publish'}</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleUnpublish}
+                disabled={isSaving || isPublishing}
+                className="flex items-center space-x-2 px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
+              >
+                {isPublishing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <CheckCircle className="w-4 h-4" />
+                )}
+                <span>{isPublishing ? 'Unpublishing...' : 'Unpublish'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
