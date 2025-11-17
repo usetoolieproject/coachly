@@ -123,7 +123,21 @@ export async function listMeetings(req, res) {
         console.log('⚠️ Student has no instructor assigned');
         return res.json({ success: true, meetings: [] });
       }
-      query = query.eq('instructor_id', studentData.instructor_id);
+      
+      // Get the instructor's user_id from the instructors table
+      const { data: instructorRecord } = await supabase
+        .from('instructors')
+        .select('user_id')
+        .eq('id', studentData.instructor_id)
+        .single();
+      
+      if (!instructorRecord) {
+        console.log('⚠️ Instructor not found for student');
+        return res.json({ success: true, meetings: [] });
+      }
+      
+      console.log('📚 Filtering meetings by instructor user_id:', instructorRecord.user_id);
+      query = query.eq('instructor_id', instructorRecord.user_id);
     }
 
     if (status) {
@@ -228,8 +242,25 @@ export async function getMeeting(req, res) {
       });
       
       if (studentData && studentData.instructor_id) {
-        hasAccess = meeting.instructor_id === studentData.instructor_id;
-        accessReason = hasAccess ? 'student_of_instructor' : 'different_instructor';
+        // Get the instructor's user_id from the instructors table
+        const { data: instructorRecord } = await supabase
+          .from('instructors')
+          .select('user_id')
+          .eq('id', studentData.instructor_id)
+          .single();
+        
+        console.log('📚 Instructor lookup:', {
+          studentInstructorId: studentData.instructor_id,
+          instructorUserId: instructorRecord?.user_id,
+          meetingInstructorId: meeting.instructor_id
+        });
+        
+        if (instructorRecord) {
+          hasAccess = meeting.instructor_id === instructorRecord.user_id;
+          accessReason = hasAccess ? 'student_of_instructor' : 'different_instructor';
+        } else {
+          accessReason = 'instructor_not_found';
+        }
       } else {
         accessReason = 'no_instructor_assigned';
       }
