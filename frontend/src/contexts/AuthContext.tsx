@@ -148,6 +148,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     }
     
+    // Double-check logout state right before API call (safety net)
+    if (sessionStorage.getItem('justLoggedOut') === 'true') {
+      console.log('🚪 Double-check: Still logged out, aborting auth API call');
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    
     try {
       const data = await apiFetch('/auth/me', { timeout: 10000 });
       console.log('✅ Auth check success:', data?.user?.email);

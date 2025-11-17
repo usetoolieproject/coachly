@@ -54,10 +54,11 @@ const LandingPage = () => {
         // Stay on landing page after logout, even if user object still exists
         console.log('🚪 Landing page: User just logged out, staying here');
         
-        // Clear the flag after a short delay to allow the page to settle
+        // Clear the flag after a longer delay to ensure cookies are fully cleared
+        // and no auth checks succeed in the meantime (10 seconds)
         setTimeout(() => {
           sessionStorage.removeItem('justLoggedOut');
-        }, 2000);
+        }, 10000);
         return;
       }
     }
