@@ -77,7 +77,16 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
     },
     {
       key: 'record',
-      label: 'Record & Library',
+      label: 'Record',
+      icon: Disc,
+      path: '/coach/record',
+      hasSubmenu: false,
+      requiresPro: true,
+      proFeature: 'screenRecording' as const
+    },
+    {
+      key: 'library',
+      label: 'Video Library',
       icon: Library,
       path: '/coach/library',
       hasSubmenu: false,
