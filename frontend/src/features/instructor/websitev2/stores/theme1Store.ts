@@ -37,6 +37,7 @@ export interface Theme1State {
 
 // Theme 1 default sections - pre-added like Theme2
 const theme1DefaultSections: string[] = [
+  'domain',
   'banner',
   'offer-box',
   'about-join-combined',

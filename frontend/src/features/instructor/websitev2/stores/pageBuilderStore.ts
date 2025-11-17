@@ -255,7 +255,9 @@ export const usePageBuilderStore = create<PageBuilderState>()(
       },
 
       unpublishWebsite: async () => {
+        console.log('[pageBuilderStore] Starting unpublish...');
         const currentState = get();
+        console.log('[pageBuilderStore] Current theme:', currentState.selectedTheme);
         
         // Set publishing state (reuse isPublishing for unpublishing)
         if (currentState.selectedTheme === 'professional-coach') {
@@ -292,8 +294,11 @@ export const usePageBuilderStore = create<PageBuilderState>()(
             isPublished: false, // Set to false to unpublish
           };
           
+          console.log('[pageBuilderStore] Sending unpublish config:', config);
           const result = await websiteService.saveWebsiteConfiguration(config);
+          console.log('[pageBuilderStore] Unpublish API result:', result);
           if (result.success) {
+            console.log('[pageBuilderStore] Unpublish successful, updating store...');
             // Update the theme-specific store
             if (currentState.selectedTheme === 'professional-coach') {
               useTheme1Store.setState({ isPublished: false, isPublishing: false });
@@ -304,11 +309,23 @@ export const usePageBuilderStore = create<PageBuilderState>()(
             }
             
             set({ isPublishing: false }, false, 'unpublishWebsite');
+            console.log('[pageBuilderStore] Store updated, unpublish complete');
             
             return true;
           }
           
+          console.error('[pageBuilderStore] Unpublish failed, result:', result);
+          
           // Reset publishing state on failure
+          if (currentState.selectedTheme === 'professional-coach') {
+            useTheme1Store.setState({ isPublishing: false });
+          } else if (currentState.selectedTheme === 'fitness-trainer') {
+            useFitnessTrainerStore.setState({ isPublishing: false });
+          } else {
+        } catch (error) {
+          console.error('[pageBuilderStore] Unpublish error:', error);
+          // Reset publishing state on error
+          const currentState = get();
           if (currentState.selectedTheme === 'professional-coach') {
             useTheme1Store.setState({ isPublishing: false });
           } else if (currentState.selectedTheme === 'fitness-trainer') {
@@ -318,15 +335,7 @@ export const usePageBuilderStore = create<PageBuilderState>()(
           }
           
           set({ isPublishing: false }, false, 'setIsPublishing');
-          
-          return false;
-        } catch (error) {
-          // Reset publishing state on error
-          const currentState = get();
-          if (currentState.selectedTheme === 'professional-coach') {
-            useTheme1Store.setState({ isPublishing: false });
-          } else if (currentState.selectedTheme === 'fitness-trainer') {
-            useFitnessTrainerStore.setState({ isPublishing: false });
+          return false;rainerStore.setState({ isPublishing: false });
           } else {
             useStartFromScratchStore.setState({ isPublishing: false });
           }

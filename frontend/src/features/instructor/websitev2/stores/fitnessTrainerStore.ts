@@ -37,6 +37,7 @@ export interface FitnessTrainerState {
 
 // Fitness Trainer default configuration - ALL SECTIONS ADDED (like theme1)
 const fitnessTrainerDefaultSections: string[] = [
+  'domain',
   'hero',
   'banner',
   'trainer-about',

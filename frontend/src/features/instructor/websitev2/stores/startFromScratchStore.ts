@@ -36,7 +36,7 @@ export interface StartFromScratchState {
 }
 
 // Start from Scratch default configuration - EMPTY (user adds sections manually)
-const startFromScratchDefaultSections: string[] = [];
+const startFromScratchDefaultSections: string[] = ['domain'];
 const startFromScratchDefaultData = {
   design: {
     primaryColor: '#8b5cf6',

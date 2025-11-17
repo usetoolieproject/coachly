@@ -70,19 +70,6 @@ const saveWebsiteConfiguration = async (req, res) => {
 
     let result;
     
-    // CRITICAL: Don't overwrite published config with draft!
-    if (existingConfig && existingConfig.is_published && !isPublished) {
-      // Return success without updating the database
-      // This preserves the published version
-      res.json({
-        success: true,
-        message: 'Draft saved (preserved published version)',
-        websiteId: existingConfig.id,
-        preservedPublished: true
-      });
-      return;
-    }
-    
     if (existingConfig) {
       // Update existing configuration for this theme
       const { data, error } = await supabase

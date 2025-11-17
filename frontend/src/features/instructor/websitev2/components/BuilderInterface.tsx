@@ -117,11 +117,67 @@ export const BuilderInterface: React.FC<BuilderInterfaceProps> = ({
 
   const handleUnpublish = useCallback(async () => {
     try {
+      console.log('Starting unpublish process...');
       const success = await unpublishWebsite();
+      console.log('Unpublish result:', success);
       if (success) {
+        console.log('Website unpublished successfully');
+        // Show success notification
+        const notification = document.createElement('div');
+        notification.textContent = 'Website unpublished successfully!';
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #10b981;
+          color: white;
+          padding: 16px;
+          border-radius: 8px;
+          z-index: 10000;
+          font-size: 14px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
       } else {
+        console.error('Failed to unpublish website');
+        // Show error notification
+        const notification = document.createElement('div');
+        notification.textContent = 'Failed to unpublish website. Please try again.';
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #ef4444;
+          color: white;
+          padding: 16px;
+          border-radius: 8px;
+          z-index: 10000;
+          font-size: 14px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
       }
     } catch (error) {
+      console.error('Error unpublishing website:', error);
+      // Show error notification
+      const notification = document.createElement('div');
+      notification.textContent = 'Error unpublishing website. Please try again.';
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 16px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
     }
   }, [unpublishWebsite]);
 
