@@ -1,60 +1,56 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TenantProvider } from "./contexts/TenantContext";
-// import { HostRedirectHandler } from "./components/HostRedirectHandler";
 import { RootRouteHandler } from "./components/RootRouteHandler";
 import { LoginRouteHandler } from "./components/LoginRouteHandler";
-// Import shared components
 import { ProtectedRoute, PublicRoute, OfflineIndicator } from "./components/shared";
-// Import admin feature
-import { AdminDashboard, AdminProfilePage } from "./features/admin";
 
-// Import auth components
-import { 
-  CleanStudentLogin, 
-  CleanInstructorLogin, 
-  CleanStudentSignup,
-  CleanAdminLogin
-} from "./components/auth";
-import SignupComplete from "./components/auth/instructor/SignupComplete";
-import ForgotPassword from "./components/auth/ForgotPassword";
-import ResetPassword from "./components/auth/ResetPassword";
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+  </div>
+);
 
-// Import layout components
-import { InstructorLayout, StudentLayout, AdminLayout } from "./components/layout";
-import { PremiumGuard } from "./features/instructor/notification";
-import { StudentPremiumGuard } from "./features/student/notification";
-
-// Import instructor components
-import { InstructorDashboard } from "./features/instructor/instructorDashboard";
-import { 
-  ManageCourses,
-  InstructorStudents,
-  InstructorWebsiteV2,
-  InstructorSettings,
-  InstructorCommunity,
-  InstructorLiveCalls,
-  InstructorSocialCalendar,
-  InstructorStudentDetails
-} from "./features/instructor";
-import { Library } from "./features/instructor/library";
-import CleanMeetingsDashboard from "./features/instructor/meetings/CleanMeetingsDashboard";
-import MeetingRoom from "./components/meetings/MeetingRoom";
-
-// Import student components
-import { 
-  CleanStudentDashboard,
-  StudentCommunity,
-  StudentLiveCalls,
-  StudentProgress,
-  StudentMeetings
-} from "./features/student";
-import StudentSettingsPage from "./features/student/settings/index.tsx";
-import Contact from "./features/landing-page/pages/Contact";
-import Privacy from "./features/landing-page/pages/Privacy";
-import Terms from "./features/landing-page/pages/Terms";
-import ScreenRecorderDemo from './features/screen-recorder/ScreenRecorderDemo';
+// Lazy load all route components for better performance
+const AdminDashboard = lazy(() => import("./features/admin").then(m => ({ default: m.AdminDashboard })));
+const AdminProfilePage = lazy(() => import("./features/admin").then(m => ({ default: m.AdminProfilePage })));
+const CleanStudentLogin = lazy(() => import("./components/auth").then(m => ({ default: m.CleanStudentLogin })));
+const CleanInstructorLogin = lazy(() => import("./components/auth").then(m => ({ default: m.CleanInstructorLogin })));
+const CleanStudentSignup = lazy(() => import("./components/auth").then(m => ({ default: m.CleanStudentSignup })));
+const CleanAdminLogin = lazy(() => import("./components/auth").then(m => ({ default: m.CleanAdminLogin })));
+const SignupComplete = lazy(() => import("./components/auth/instructor/SignupComplete"));
+const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./components/auth/ResetPassword"));
+const InstructorLayout = lazy(() => import("./components/layout").then(m => ({ default: m.InstructorLayout })));
+const StudentLayout = lazy(() => import("./components/layout").then(m => ({ default: m.StudentLayout })));
+const AdminLayout = lazy(() => import("./components/layout").then(m => ({ default: m.AdminLayout })));
+const PremiumGuard = lazy(() => import("./features/instructor/notification").then(m => ({ default: m.PremiumGuard })));
+const StudentPremiumGuard = lazy(() => import("./features/student/notification").then(m => ({ default: m.StudentPremiumGuard })));
+const InstructorDashboard = lazy(() => import("./features/instructor/instructorDashboard").then(m => ({ default: m.InstructorDashboard })));
+const ManageCourses = lazy(() => import("./features/instructor").then(m => ({ default: m.ManageCourses })));
+const InstructorStudents = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorStudents })));
+const InstructorWebsiteV2 = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorWebsiteV2 })));
+const InstructorSettings = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorSettings })));
+const InstructorCommunity = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorCommunity })));
+const InstructorLiveCalls = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorLiveCalls })));
+const InstructorSocialCalendar = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorSocialCalendar })));
+const InstructorStudentDetails = lazy(() => import("./features/instructor").then(m => ({ default: m.InstructorStudentDetails })));
+const Library = lazy(() => import("./features/instructor/library").then(m => ({ default: m.Library })));
+const CleanMeetingsDashboard = lazy(() => import("./features/instructor/meetings/CleanMeetingsDashboard"));
+const MeetingRoom = lazy(() => import("./components/meetings/MeetingRoom"));
+const CleanStudentDashboard = lazy(() => import("./features/student").then(m => ({ default: m.CleanStudentDashboard })));
+const StudentCommunity = lazy(() => import("./features/student").then(m => ({ default: m.StudentCommunity })));
+const StudentLiveCalls = lazy(() => import("./features/student").then(m => ({ default: m.StudentLiveCalls })));
+const StudentProgress = lazy(() => import("./features/student").then(m => ({ default: m.StudentProgress })));
+const StudentMeetings = lazy(() => import("./features/student").then(m => ({ default: m.StudentMeetings })));
+const StudentSettingsPage = lazy(() => import("./features/student/settings/index.tsx"));
+const Contact = lazy(() => import("./features/landing-page/pages/Contact"));
+const Privacy = lazy(() => import("./features/landing-page/pages/Privacy"));
+const Terms = lazy(() => import("./features/landing-page/pages/Terms"));
+const ScreenRecorderDemo = lazy(() => import('./features/screen-recorder/ScreenRecorderDemo'));
 
 function App() {
   // Host canonicalization is now handled by HostRedirectHandler component

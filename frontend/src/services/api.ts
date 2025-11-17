@@ -52,27 +52,45 @@ export function getAuthHeadersForFormData(): Record<string, string> {
   return headers;
 }
 
-export async function apiFetch<T = any>(path: string, init?: RequestInit & { omitCredentials?: boolean }): Promise<T> {
-  const { omitCredentials, ...rest } = init || {};
+export async function apiFetch<T = any>(path: string, init?: RequestInit & { omitCredentials?: boolean; timeout?: number }): Promise<T> {
+  const { omitCredentials, timeout = 10000, ...rest } = init || {};
   const apiBase = getApiBase();
   const url = path.startsWith('http') ? path : `${apiBase}${path.startsWith('/') ? '' : '/'}${path}`;
   
-  const res = await fetch(url, { credentials: omitCredentials ? 'omit' : 'include', ...rest });
+  // Create an AbortController for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
   
-  if (!res.ok) {
-    let body: any = null;
-    try { body = await res.text(); } catch {}
-    const error = new Error((body && typeof body === 'string' ? body : '') || `Request failed: ${res.status}`);
-    // @ts-ignore - Add status to error for handling
-    error.status = res.status;
-    throw error;
-  }
   try {
-    return await res.json();
-  } catch {
-    // non-JSON
-    // @ts-ignore
-    return undefined;
+    const res = await fetch(url, { 
+      credentials: omitCredentials ? 'omit' : 'include', 
+      signal: controller.signal,
+      ...rest 
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) {
+      let body: any = null;
+      try { body = await res.text(); } catch {}
+      const error = new Error((body && typeof body === 'string' ? body : '') || `Request failed: ${res.status}`);
+      // @ts-ignore - Add status to error for handling
+      error.status = res.status;
+      throw error;
+    }
+    try {
+      return await res.json();
+    } catch {
+      // non-JSON
+      // @ts-ignore
+      return undefined;
+    }
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout - please check your connection');
+    }
+    throw error;
   }
 }
 

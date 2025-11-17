@@ -62,6 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const authCheckAttempted = React.useRef(false);
+  const lastAuthCheck = React.useRef<number>(0);
 
   useEffect(() => {
     // Prevent multiple auth checks
@@ -70,13 +71,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     authCheckAttempted.current = true;
     
+    // Try optimistic loading from localStorage first
+    try {
+      const cachedUser = localStorage.getItem('user');
+      const lastCheck = localStorage.getItem('lastAuthCheck');
+      const now = Date.now();
+      
+      // If we have cached user data from last 30 seconds, use it optimistically
+      if (cachedUser && lastCheck && (now - parseInt(lastCheck)) < 30000) {
+        console.log('⚡ Using cached auth data for fast load');
+        setUser(JSON.parse(cachedUser));
+        setLoading(false);
+        // Still verify in background
+        setTimeout(() => checkAuthStatus(true), 100);
+        return;
+      }
+      
+      // If we have cached user but it's stale, show it briefly while verifying
+      if (cachedUser) {
+        console.log('⚡ Using stale cached auth, verifying...');
+        setUser(JSON.parse(cachedUser));
+      }
+    } catch (e) {
+      console.warn('Failed to read cached auth:', e);
+    }
+    
     // Log cookies for debugging
     console.log('🍪 Current cookies:', document.cookie);
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
-    console.log('🔐 Checking auth status...');
+  const checkAuthStatus = async (isBackgroundVerification = false) => {
+    console.log('🔐 Checking auth status...', isBackgroundVerification ? '(background)' : '');
     console.log('🍪 Current cookies:', document.cookie);
     
     // Check if this is a logout redirect - if so, clear user immediately
@@ -123,8 +149,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     
     try {
-      const data = await apiFetch('/auth/me');
+      const data = await apiFetch('/auth/me', { timeout: 10000 });
       console.log('✅ Auth check success:', data?.user?.email);
+      lastAuthCheck.current = Date.now();
       
       if (!data?.user) {
         console.warn('⚠️ No user in /auth/me response');
@@ -133,22 +160,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(data.user);
       
-      // Store user in localStorage for faster subsequent loads
+      // Store user and timestamp in localStorage for faster subsequent loads
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('lastAuthCheck', Date.now().toString());
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
         }
       }
     } catch (error) {
       console.error('❌ Auth check failed:', error);
-      setUser(null);
+      
+      // Only clear user if this is not a background verification
+      // (to avoid flickering if cached user was valid)
+      if (!isBackgroundVerification) {
+        setUser(null);
+      }
       
       // Clear invalid data
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem('user');
+          localStorage.removeItem('lastAuthCheck');
           sessionStorage.clear();
         } catch (e) {}
       }
@@ -191,10 +225,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(data.user);
       
-      // Store user in localStorage
+      // Store user and timestamp in localStorage
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('lastAuthCheck', Date.now().toString());
+          lastAuthCheck.current = Date.now();
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
         }
