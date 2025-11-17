@@ -628,13 +628,13 @@ const MeetingRoom: React.FC = () => {
               if (isSharing) return null; // Don't show thumbnail for the one sharing
 
               return (
-                <div key={socketId} className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
+                <div key={`thumbnail-${socketId}`} className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
                   <video
                     ref={(el) => {
                       if (el) {
                         console.log('🎥 Thumbnail video element mounted for socketId:', socketId);
-                        remoteVideosRef.current.set(socketId, el);
-                        // Try to set stream immediately if available
+                        // Don't store in remoteVideosRef to avoid conflicts with main display
+                        // Just set the stream directly
                         if (stream && el.srcObject !== stream) {
                           console.log('🎥 Setting stream immediately on thumbnail mount for:', socketId);
                           el.srcObject = stream;
