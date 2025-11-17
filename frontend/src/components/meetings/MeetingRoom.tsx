@@ -549,7 +549,19 @@ const MeetingRoom: React.FC = () => {
                 <>
                   <video
                     ref={(el) => {
-                      if (el && screenSharingUser) remoteVideosRef.current.set(screenSharingUser, el);
+                      if (el && screenSharingUser) {
+                        console.log('🎥 Screen share video element mounted for socketId:', screenSharingUser);
+                        remoteVideosRef.current.set(screenSharingUser, el);
+                        // Attach stream immediately if available
+                        const stream = remoteStreams.get(screenSharingUser);
+                        if (stream && el.srcObject !== stream) {
+                          console.log('🎥 Setting screen share stream immediately for:', screenSharingUser);
+                          el.srcObject = stream;
+                          el.play().catch(err => console.error('Error playing screen share:', err));
+                        } else {
+                          console.warn('⚠️ No stream available yet for screen share:', screenSharingUser);
+                        }
+                      }
                     }}
                     autoPlay
                     playsInline
