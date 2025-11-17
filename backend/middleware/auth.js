@@ -26,10 +26,17 @@ export const authenticateToken = async (req, res, next) => {
             break;
           }
         }
-      } catch {}
+      } catch (e) {
+        console.error('[auth] Error parsing cookie:', e);
+      }
     }
 
     if (!token) {
+      console.error('[auth] No token found. Headers:', {
+        authorization: req.headers['authorization'],
+        cookie: req.headers.cookie,
+        path: req.path
+      });
       return res.status(401).json({ error: 'Access token required' });
     }
 

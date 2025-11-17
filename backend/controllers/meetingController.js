@@ -108,7 +108,7 @@ export async function listMeetings(req, res) {
 
     const supabase = getSupabaseClient();
 
-    // Simplified query - get all meetings for this instructor
+    // Get meetings based on user role
     let query = supabase
       .from('meetings')
       .select('*');
@@ -116,6 +116,14 @@ export async function listMeetings(req, res) {
     // Filter by instructor ID for instructors
     if (userRole === 'instructor') {
       query = query.eq('instructor_id', userId);
+    } else if (userRole === 'student') {
+      // Students see meetings from their assigned instructor
+      const studentData = req.user.students?.[0];
+      if (!studentData || !studentData.instructor_id) {
+        console.log('⚠️ Student has no instructor assigned');
+        return res.json({ success: true, meetings: [] });
+      }
+      query = query.eq('instructor_id', studentData.instructor_id);
     }
 
     if (status) {
