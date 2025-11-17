@@ -51,8 +51,18 @@ export const authenticateToken = async (req, res, next) => {
       .single();
 
     if (error || !user) {
+      console.error('[auth] User not found:', decoded.userId, error);
       return res.status(403).json({ error: 'Invalid token or user not found' });
     }
+    
+    console.log('[auth] User authenticated:', {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      hasInstructors: !!user.instructors?.length,
+      hasStudents: !!user.students?.length,
+      studentInstructorId: user.students?.[0]?.instructor_id
+    });
 
     req.user = user;
     next();
