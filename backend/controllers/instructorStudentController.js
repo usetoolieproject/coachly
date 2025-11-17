@@ -357,3 +357,89 @@ export const getStudentDetails = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// Create a new student account (instructor creating student)
+export const createStudent = async (req, res) => {
+  try {
+    const supabase = getSupabaseClient();
+    const instructorId = req.user.instructors[0]?.id;
+
+    if (!instructorId) {
+      return res.status(403).json({ error: 'Instructor access required' });
+    }
+
+    const { firstName, lastName, email, password, sendEmail = false } = req.body;
+
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ error: 'First name, last name, and email are required' });
+    }
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id, email')
+      .eq('email', email)
+      .single();
+
+    if (existingUser) {
+      return res.status(400).json({ error: 'A user with this email already exists' });
+    }
+
+    // Generate a random password if not provided
+    const bcrypt = (await import('bcryptjs')).default;
+    const finalPassword = password || Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+    const passwordHash = await bcrypt.hash(finalPassword, 10);
+
+    // Create user
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .insert({
+        email,
+        password_hash: passwordHash,
+        role: 'student',
+        first_name: firstName,
+        last_name: lastName
+      })
+      .select()
+      .single();
+
+    if (userError) {
+      return res.status(400).json({ error: userError.message });
+    }
+
+    // Create student profile linked to this instructor
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .insert({
+        user_id: user.id,
+        instructor_id: instructorId
+      })
+      .select()
+      .single();
+
+    if (studentError) {
+      // Rollback user creation if student creation fails
+      await supabase.from('users').delete().eq('id', user.id);
+      return res.status(400).json({ error: studentError.message });
+    }
+
+    // TODO: Send welcome email with credentials if sendEmail is true
+    // This would require email service integration
+
+    res.status(201).json({
+      message: 'Student account created successfully',
+      student: {
+        id: student.id,
+        userId: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        // Only return password if it was auto-generated (for instructor to share with student)
+        ...(password ? {} : { temporaryPassword: finalPassword })
+      }
+    });
+  } catch (error) {
+    console.error('Error creating student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

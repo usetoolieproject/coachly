@@ -76,7 +76,8 @@ import {
 } from './controllers/communityController.js';
 import {
   getInstructorStudents,
-  getStudentDetails
+  getStudentDetails,
+  createStudent
 } from './controllers/instructorStudentController.js';
 import { 
   getProfile,
@@ -513,6 +514,7 @@ router.delete('/instructor/about-page/intro-content/:contentId', authenticateTok
 router.post('/instructor/about-page/upload-banner', authenticateToken, requireRole(['instructor']), checkInstructorPremium, uploadBanner);
 
 router.get('/instructor/students', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getInstructorStudents);
+router.post('/instructor/students', authenticateToken, requireRole(['instructor']), checkInstructorPremium, createStudent);
 router.get('/instructor/students/:studentId', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getStudentDetails);
 
 router.get('/instructor/dashboard-analytics', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getDashboardAnalytics);
