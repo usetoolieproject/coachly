@@ -13,6 +13,22 @@ export const RootRouteHandler: React.FC = () => {
   const { user, loading } = useAuth();
   const { slug } = useTenant();
 
+  // Check if user just logged out
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasLogoutParam = urlParams.has('logout');
+  const justLoggedOut = sessionStorage.getItem('justLoggedOut') === 'true';
+
+  // If user just logged out, clear the flag and force show landing page
+  if (hasLogoutParam || justLoggedOut) {
+    sessionStorage.removeItem('justLoggedOut');
+    // Remove logout param from URL without reloading
+    if (hasLogoutParam) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+    return <LandingPage />;
+  }
+
   // Show loading spinner while auth is being checked
   if (loading) {
     return (
