@@ -625,7 +625,25 @@ const MeetingRoom: React.FC = () => {
               const participant = participants.get(socketId);
               const isSharing = socketId === screenSharingUser;
               
-              if (isSharing) return null; // Don't show thumbnail for the one sharing
+              // Show avatar for presenter instead of hiding them
+              if (isSharing) {
+                return (
+                  <div key={`thumbnail-${socketId}`} className="relative bg-gray-700 rounded-lg overflow-hidden aspect-video flex-shrink-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-2xl font-bold text-white">
+                        {participant?.userName?.[0]?.toUpperCase() || 'P'}
+                      </span>
+                    </div>
+                    <div className="absolute top-2 right-2 bg-blue-600 px-2 py-1 rounded text-white text-xs">
+                      Presenting
+                    </div>
+                    <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs flex items-center gap-1">
+                      {participant?.userName || 'Unknown'}
+                      {!participant?.audio && <MicOff className="w-3 h-3" />}
+                    </div>
+                  </div>
+                );
+              }
 
               return (
                 <div key={`thumbnail-${socketId}`} className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex-shrink-0">
