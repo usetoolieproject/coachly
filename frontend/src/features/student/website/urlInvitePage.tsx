@@ -65,17 +65,27 @@ const UrlInvitePage: React.FC = () => {
 
   if (error || !aboutPageData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Globe className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Page Not Found</h3>
-          <p className="text-gray-600 mb-4">{error || 'This community page does not exist or is not published.'}</p>
-          <button
-            onClick={() => navigate('/')}
-            className="text-purple-600 hover:text-purple-700 font-medium"
-          >
-            Return to Home
-          </button>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <Globe className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+          <h3 className="text-2xl font-semibold text-gray-900 mb-2">Welcome to {subdirectory}</h3>
+          <p className="text-gray-600 mb-6">
+            {error || 'This instructor is setting up their page. If you\'re a student, please log in to access your dashboard.'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate('/login')}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors"
+            >
+              Student Login
+            </button>
+            <button
+              onClick={() => window.location.href = 'https://usecoachly.com'}
+              className="px-6 py-3 bg-white text-gray-700 rounded-lg hover:bg-gray-50 font-medium border border-gray-300 transition-colors"
+            >
+              Instructor Login
+            </button>
+          </div>
         </div>
       </div>
     );

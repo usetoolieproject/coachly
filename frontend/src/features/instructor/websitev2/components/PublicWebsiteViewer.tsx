@@ -90,7 +90,8 @@ export const PublicWebsiteViewer: React.FC<PublicWebsiteViewerProps> = () => {
   }
 
   if (error || !websiteConfig) {
-    // If no websitev2 configuration found, fall back to the old website system
+    // If no websitev2 configuration found, try the old website system
+    // If that also fails, it will show its own "Page Not Found" with login option
     return <UrlInvitePage />;
   }
 
