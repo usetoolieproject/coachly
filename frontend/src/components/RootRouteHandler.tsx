@@ -10,13 +10,20 @@ import { PublicWebsiteViewer } from '../features/instructor/websitev2/components
  * based on domain type and authentication status
  */
 export const RootRouteHandler: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const { slug } = useTenant();
 
   // Check if user just logged out
   const urlParams = new URLSearchParams(window.location.search);
   const hasLogoutParam = urlParams.has('logout');
+  const hasForceLogoutParam = urlParams.has('forceLogout');
   const justLoggedOut = sessionStorage.getItem('justLoggedOut') === 'true';
+
+  // If forceLogout parameter is present, trigger logout immediately
+  if (hasForceLogoutParam && !justLoggedOut) {
+    logout();
+    return null;
+  }
 
   // If user just logged out, clear the flag and force show landing page
   if (hasLogoutParam || justLoggedOut) {
