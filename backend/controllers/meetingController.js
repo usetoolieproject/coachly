@@ -193,10 +193,27 @@ export async function getMeeting(req, res) {
     }
 
     // Verify user has access to this meeting
-    const hasAccess = meeting.instructor_id === userId || 
-                      meeting.meeting_participants.some(p => p.user_id === userId);
+    let hasAccess = false;
+    
+    // Instructors can access their own meetings
+    if (req.user.role === 'instructor') {
+      hasAccess = meeting.instructor_id === userId;
+    } 
+    // Students can access meetings from their assigned instructor
+    else if (req.user.role === 'student') {
+      const studentData = req.user.students?.[0];
+      if (studentData && studentData.instructor_id) {
+        hasAccess = meeting.instructor_id === studentData.instructor_id;
+      }
+    }
+    
+    // Also check if user is a participant
+    if (!hasAccess) {
+      hasAccess = meeting.meeting_participants.some(p => p.user_id === userId);
+    }
 
     if (!hasAccess) {
+      console.log('❌ Access denied for user:', userId, 'meeting instructor:', meeting.instructor_id);
       return res.status(403).json({ 
         success: false, 
         message: 'Access denied' 
