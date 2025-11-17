@@ -200,6 +200,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem('user');
+          localStorage.removeItem('token');
           localStorage.removeItem('lastAuthCheck');
           sessionStorage.clear();
         } catch (e) {}
@@ -249,12 +250,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(data.user);
       
-      // Store user and timestamp in localStorage
+      // Store user, token, and timestamp in localStorage
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('user', JSON.stringify(data.user));
           localStorage.setItem('lastAuthCheck', Date.now().toString());
           lastAuthCheck.current = Date.now();
+          
+          // Store token if provided for Authorization header fallback
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+          }
         } catch (e) {
           console.warn('Failed to store user in localStorage:', e);
         }
@@ -412,6 +418,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           localStorage.removeItem('theme');
           localStorage.removeItem('tenantSlug');
           localStorage.removeItem('user');
+          localStorage.removeItem('token');
           localStorage.removeItem('auth');
         } catch (e) {
         }

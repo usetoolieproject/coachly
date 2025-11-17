@@ -61,11 +61,21 @@ export async function apiFetch<T = any>(path: string, init?: RequestInit & { omi
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   
+  // Add Authorization header if token exists in localStorage
+  const headers = new Headers(rest.headers || {});
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+  }
+  
   try {
     const res = await fetch(url, { 
       credentials: omitCredentials ? 'omit' : 'include', 
       signal: controller.signal,
-      ...rest 
+      ...rest,
+      headers 
     });
     
     clearTimeout(timeoutId);
