@@ -68,17 +68,16 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       requiresPro: false
     },
     {
-      key: 'record',
-      label: 'Record',
-      icon: Disc,
-      path: '/coach/record',
+      key: 'community',
+      label: 'Community',
+      icon: MessageCircle,
+      path: '/coach/community',
       hasSubmenu: false,
-      requiresPro: true,
-      proFeature: 'screenRecording' as const
+      requiresPro: false
     },
     {
-      key: 'library',
-      label: 'Video Library',
+      key: 'record',
+      label: 'Record & Library',
       icon: Library,
       path: '/coach/library',
       hasSubmenu: false,
@@ -86,10 +85,26 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       proFeature: 'videoHosting' as const
     },
     {
-      key: 'community',
-      label: 'Community',
-      icon: MessageCircle,
-      path: '/coach/community',
+      key: 'social-calendar',
+      label: 'Social Calendar',
+      icon: Calendar,
+      path: '/coach/social-calendar',
+      hasSubmenu: false,
+      requiresPro: false
+    },
+    {
+      key: 'website',
+      label: 'Website',
+      icon: Globe,
+      path: '/coach/websitev2',
+      hasSubmenu: false,
+      requiresPro: false
+    },
+    {
+      key: 'students',
+      label: 'Students',
+      icon: Users,
+      path: '/coach/students',
       hasSubmenu: false,
       requiresPro: false
     },
@@ -109,30 +124,6 @@ const InstructorSidebar: React.FC<InstructorSidebarProps> = ({
       hasSubmenu: false,
       requiresPro: true,
       proFeature: 'meet' as const
-    },
-    {
-      key: 'students',
-      label: 'Students',
-      icon: Users,
-      path: '/coach/students',
-      hasSubmenu: false,
-      requiresPro: false
-    },
-    {
-      key: 'social-calendar',
-      label: 'Social Calendar',
-      icon: Calendar,
-      path: '/coach/social-calendar',
-      hasSubmenu: false,
-      requiresPro: false
-    },
-    {
-      key: 'website',
-      label: 'Website',
-      icon: Globe,
-      path: '/coach/websitev2',
-      hasSubmenu: false,
-      requiresPro: false
     }
   ];
 
