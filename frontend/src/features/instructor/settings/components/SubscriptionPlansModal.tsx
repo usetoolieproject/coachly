@@ -62,8 +62,8 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Choose Your Plan</h2>
@@ -77,13 +77,13 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-8">
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {plans.map((plan) => {
                 const promoPrice = plan.promoEnabled 
                   ? calculatePromoPrice(plan.basePriceCents, plan.promoDiscountPercent)
@@ -95,15 +95,26 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                   ? calculatePromoPrice(plan.basePriceCents, appliedPromo.discount_percent)
                   : null;
 
+                const isPro = plan.name === 'Pro';
+                
                 return (
                   <div
                     key={plan.id}
-                    className={`relative bg-white rounded-lg border-2 p-6 transition-all ${
-                      plan.promoEnabled 
-                        ? 'border-orange-300 shadow-lg' 
-                        : 'border-gray-200 hover:border-purple-300'
+                    className={`relative bg-white rounded-2xl border-2 p-8 transition-all ${
+                      isPro
+                        ? 'border-purple-500 shadow-xl' 
+                        : 'border-gray-200 hover:border-purple-300 shadow-lg'
                     }`}
                   >
+                    {/* Most Popular Badge for Pro */}
+                    {isPro && (
+                      <div className="absolute -top-4 right-8">
+                        <div className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                          Most Popular
+                        </div>
+                      </div>
+                    )}
+
                     {/* Promo Badge */}
                     {(plan.promoEnabled || userPromoApplies) && (
                       <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
@@ -115,44 +126,41 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                     )}
 
                     {/* Plan Header */}
-                    <div className={`text-center mb-6 ${plan.promoEnabled ? 'mt-3' : ''}`}>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    <div className={`mb-6 ${plan.promoEnabled ? 'mt-3' : ''}`}>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                       <p className="text-gray-600 text-sm">{plan.description}</p>
                     </div>
 
                     {/* Pricing */}
-                    <div className="text-center mb-6">
-                      <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-2 mb-1">
                         {userPromoPrice && (
                           <>
-                            <span className="text-3xl font-bold text-orange-600">
+                            <span className="text-4xl font-bold text-orange-600">
                               {formatPrice(userPromoPrice)}
                             </span>
-                            <span className="text-lg text-gray-400 line-through">
+                            <span className="text-xl text-gray-400 line-through">
                               {formatPrice(plan.basePriceCents)}
                             </span>
                           </>
                         )}
                         {!userPromoPrice && promoPrice && (
                           <>
-                            <span className="text-3xl font-bold text-orange-600">
+                            <span className="text-4xl font-bold text-orange-600">
                               {formatPrice(promoPrice)}
                             </span>
-                            <span className="text-lg text-gray-400 line-through">
+                            <span className="text-xl text-gray-400 line-through">
                               {formatPrice(plan.basePriceCents)}
                             </span>
                           </>
                         )}
                         {!userPromoPrice && !promoPrice && (
-                          <span className="text-3xl font-bold text-gray-900">
+                          <span className="text-5xl font-bold text-gray-900">
                             {formatPrice(plan.basePriceCents)}
                           </span>
                         )}
-                      </div>
-                      <div className="flex items-center justify-center gap-1 text-gray-500">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm">
-                          per {getBillingIntervalText(plan.billingInterval, plan.billingIntervalCount)}
+                        <span className="text-gray-600">
+                          {getBillingIntervalText(plan.billingInterval, plan.billingIntervalCount)}
                         </span>
                       </div>
                       
@@ -164,12 +172,12 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                     </div>
 
                     {/* Features */}
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">What's included:</h4>
-                      <ul className="space-y-2">
+                    <div className="mb-8">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-4">What's included:</h4>
+                      <ul className="space-y-3">
                         {plan.features.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                            <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <li key={index} className="flex items-start gap-3 text-gray-700">
+                            <Check className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -180,21 +188,26 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                     <button
                       onClick={() => handleSelectPlan(plan.id)}
                       disabled={selectingPlan === plan.id}
-                      className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                        plan.promoEnabled
-                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                          : 'bg-purple-600 hover:bg-purple-700 text-white'
+                      className={`w-full py-3 px-6 rounded-lg font-semibold text-base transition-all ${
+                        isPro
+                          ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-xl'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-900 border-2 border-gray-300'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       {selectingPlan === plan.id ? (
                         <div className="flex items-center justify-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          Selecting...
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          Processing...
                         </div>
                       ) : (
-                        'Select Plan'
+                        'Get Started'
                       )}
                     </button>
+                    
+                    {/* Footer text */}
+                    <p className="text-center text-xs text-gray-500 mt-3">
+                      {isPro ? 'Most popular choice' : 'Basic Plan'}
+                    </p>
                   </div>
                 );
               })}

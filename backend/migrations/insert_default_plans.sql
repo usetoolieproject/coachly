@@ -25,18 +25,18 @@ INSERT INTO subscription_plans (
 ) VALUES (
   '3425044c-2a58-423f-a498-6bf5309c366c',
   'Basic',
-  'Essential features for getting started',
+  'Get your first course online fast.',
   4900, -- $49.00
-  'month',
+  'one_time',
   1,
   NULL, -- Add your Stripe Price ID here after creating it in Stripe
   ARRAY[
-    'Professional Coach theme',
-    'Up to 50 students',
-    'Basic course management',
-    'Email support',
-    'Community features',
-    'Basic analytics'
+    'Unlimited Members',
+    'Unlimited Courses',
+    'Community Chat',
+    'Content Calendar',
+    'Live Calls Schedule',
+    'Sales Funnel'
   ]::text[],
   true,
   true,
@@ -82,21 +82,16 @@ INSERT INTO subscription_plans (
 ) VALUES (
   '6e20a522-992f-449a-a6da-102ed32a552d',
   'Pro',
-  'Advanced features for professional coaches',
-  9900, -- $99.00
-  'month',
+  'Everything in Basic, plus tools to scale.',
+  8900, -- $89.00
+  'one_time',
   1,
   NULL, -- Add your Stripe Price ID here after creating it in Stripe
   ARRAY[
-    'All Basic features',
-    'All premium themes',
-    'Unlimited students',
-    'Advanced analytics',
-    'Priority support',
-    'Custom domain',
-    'Video hosting',
-    'Zoom integration',
-    'White-label branding'
+    'Screen Recording',
+    'Video Hosting (100 GB Included)',
+    'Meet - Host live calls',
+    'Custom Domain'
   ]::text[],
   true,
   true,
