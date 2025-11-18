@@ -10,8 +10,9 @@ function safeParseJsonArray(value: any): string[] {
 }
 
 function getApiBaseUrl(): string {
-  if (typeof window !== 'undefined' && /usecoachly\.com$/.test(window.location.hostname.toLowerCase())) return '';
-  return import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  // Always use the configured API URL (backend server)
+  // Don't try to use same-origin calls for production
+  return import.meta.env.VITE_API_URL || 'https://coachly-backend.onrender.com';
 }
 
 export const subscriptionPlansService = {
