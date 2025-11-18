@@ -165,9 +165,10 @@ export default function CleanInstructorLogin() {
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className="text-purple-600 hover:text-purple-700 font-medium text-xs sm:text-sm"
+                  className="text-purple-600 hover:text-purple-700 font-medium text-xs sm:text-sm inline-flex items-center gap-1"
                 >
-                  ← Back to Sign In
+                  <span>Already have an account?</span>
+                  <span className="underline">Sign In</span>
                 </button>
               </div>
             </form>
