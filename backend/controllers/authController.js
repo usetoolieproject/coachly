@@ -745,8 +745,11 @@ export const googleCallback = async (req, res) => {
   try {
     const { code } = req.query;
     
+    // Get frontend URL from FRONTEND_URL or first URL from FRONTEND_URLS
+    const frontendUrl = process.env.FRONTEND_URL || process.env.FRONTEND_URLS?.split(',')[0]?.trim() || 'http://localhost:5173';
+    
     if (!code) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+      return res.redirect(`${frontendUrl}/sign-in?error=oauth_failed`);
     }
 
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -769,7 +772,7 @@ export const googleCallback = async (req, res) => {
     const tokens = await tokenResponse.json();
     
     if (!tokens.access_token) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+      return res.redirect(`${frontendUrl}/sign-in?error=oauth_failed`);
     }
 
     // Get user info from Google
@@ -780,7 +783,7 @@ export const googleCallback = async (req, res) => {
     const googleUser = await userInfoResponse.json();
     
     if (!googleUser.email) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+      return res.redirect(`${frontendUrl}/sign-in?error=oauth_failed`);
     }
 
     const supabase = getSupabaseClient();
@@ -809,7 +812,7 @@ export const googleCallback = async (req, res) => {
         .single();
 
       if (userError) {
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=signup_failed`);
+        return res.redirect(`${frontendUrl}/sign-in?error=signup_failed`);
       }
 
       user = newUser;
@@ -828,7 +831,7 @@ export const googleCallback = async (req, res) => {
 
     // Only allow instructors to login via Google OAuth
     if (user.role !== 'instructor') {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=instructor_only`);
+      return res.redirect(`${frontendUrl}/sign-in?error=instructor_only`);
     }
 
     // Generate JWT token
@@ -859,11 +862,11 @@ export const googleCallback = async (req, res) => {
     } catch {}
 
     // Redirect to dashboard
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.redirect(`${frontendUrl}/coach/dashboard`);
 
   } catch (error) {
     console.error('Google OAuth error:', error);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+    const frontendUrl = process.env.FRONTEND_URL || process.env.FRONTEND_URLS?.split(',')[0]?.trim() || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/sign-in?error=oauth_failed`);
   }
 };
