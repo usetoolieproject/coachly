@@ -10,7 +10,9 @@ import {
   checkSubdomain, 
   getInstructors,
   logout,
-  completeSignup
+  completeSignup,
+  googleAuth,
+  googleCallback
 } from './controllers/authController.js';
 import {
   getSocialPosts,
@@ -214,6 +216,10 @@ router.post('/auth/logout', logout);
 router.get('/auth/check-subdomain/:subdomain', checkSubdomain);
 router.get('/auth/check-subdirectory/:subdirectory', checkSubdirectory); // Legacy route
 router.get('/auth/instructors', getInstructors);
+
+// Google OAuth routes
+router.get('/auth/google', googleAuth);
+router.get('/auth/google/callback', googleCallback);
 
 // Password Reset routes
 router.post('/auth/forgot-password', authLimiter, requestPasswordReset);

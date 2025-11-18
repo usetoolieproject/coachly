@@ -717,3 +717,153 @@ export const getInstructors = async (req, res) => {
     res.status(500).json({ error: 'Error fetching instructors' });
   }
 };
+
+// Google OAuth - Initiate authentication
+export const googleAuth = async (req, res) => {
+  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+  const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/auth/google/callback`;
+  
+  if (!GOOGLE_CLIENT_ID) {
+    return res.status(500).json({ error: 'Google OAuth not configured' });
+  }
+
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    scope: 'openid email profile',
+    access_type: 'offline',
+    prompt: 'select_account'
+  });
+
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  res.redirect(authUrl);
+};
+
+// Google OAuth - Callback handler
+export const googleCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    
+    if (!code) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+    }
+
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+    const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+    const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/auth/google/callback`;
+
+    // Exchange code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        redirect_uri: GOOGLE_REDIRECT_URI,
+        grant_type: 'authorization_code'
+      })
+    });
+
+    const tokens = await tokenResponse.json();
+    
+    if (!tokens.access_token) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+    }
+
+    // Get user info from Google
+    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` }
+    });
+
+    const googleUser = await userInfoResponse.json();
+    
+    if (!googleUser.email) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+    }
+
+    const supabase = getSupabaseClient();
+
+    // Check if user exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', googleUser.email)
+      .single();
+
+    let user = existingUser;
+
+    if (!existingUser) {
+      // Create new instructor account (Google OAuth for instructors only)
+      const { data: newUser, error: userError } = await supabase
+        .from('users')
+        .insert({
+          email: googleUser.email,
+          first_name: googleUser.given_name || googleUser.name?.split(' ')[0] || 'User',
+          last_name: googleUser.family_name || googleUser.name?.split(' ')[1] || '',
+          role: 'instructor',
+          email_verified: true
+        })
+        .select()
+        .single();
+
+      if (userError) {
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=signup_failed`);
+      }
+
+      user = newUser;
+
+      // Create instructor profile with temporary subdomain
+      const tempSubdomain = `user-${user.id}`;
+      await supabase
+        .from('instructors')
+        .insert({
+          user_id: user.id,
+          business_name: `${user.first_name}'s Business`,
+          subdomain: tempSubdomain,
+          needs_onboarding: true
+        });
+    }
+
+    // Only allow instructors to login via Google OAuth
+    if (user.role !== 'instructor') {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=instructor_only`);
+    }
+
+    // Generate JWT token
+    const token = generateToken(user.id, user.role);
+
+    // Set session cookie
+    try {
+      const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
+      const proto = String(req.headers['x-forwarded-proto'] || 'http');
+      const hostname = host.split(':')[0];
+      const labels = hostname.split('.');
+      if (labels[0] === 'www') labels.shift();
+      const apex = labels.slice(-2).join('.');
+      const isUsecoachly = apex === 'usecoachly.com';
+      const isProd = process.env.NODE_ENV === 'production' || proto === 'https';
+      
+      const cookieParts = [
+        `session=${token}`,
+        'Path=/',
+        `Max-Age=${7 * 24 * 60 * 60}`,
+        'HttpOnly',
+      ];
+      
+      if (isProd) cookieParts.push('Secure');
+      if (isUsecoachly) cookieParts.push('Domain=.usecoachly.com', 'SameSite=None');
+      
+      res.setHeader('Set-Cookie', cookieParts.join('; '));
+    } catch {}
+
+    // Redirect to dashboard
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/coach/dashboard`);
+
+  } catch (error) {
+    console.error('Google OAuth error:', error);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/sign-in?error=oauth_failed`);
+  }
+};
