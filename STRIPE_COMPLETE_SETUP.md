@@ -251,7 +251,7 @@ You need to add the Stripe Price IDs to your Supabase database.
 First, check what plans exist:
 
 ```sql
-SELECT id, name, price, stripe_price_id FROM subscription_plans;
+SELECT id, name, base_price_cents, stripe_price_id FROM subscription_plans;
 ```
 
 You should see your Basic and Pro plans with their UUIDs.
@@ -265,7 +265,6 @@ Replace `YOUR_BASIC_PRICE_ID` and `YOUR_PRO_PRICE_ID` with the actual Price IDs 
 UPDATE subscription_plans
 SET 
   stripe_price_id = 'price_YOUR_BASIC_PRICE_ID_HERE',
-  price = 49.00,
   base_price_cents = 4900
 WHERE name = 'Basic' OR name ILIKE '%basic%';
 
@@ -273,7 +272,6 @@ WHERE name = 'Basic' OR name ILIKE '%basic%';
 UPDATE subscription_plans
 SET 
   stripe_price_id = 'price_YOUR_PRO_PRICE_ID_HERE',
-  price = 89.00,
   base_price_cents = 8900
 WHERE name = 'Pro' OR name ILIKE '%pro%';
 ```
@@ -281,12 +279,12 @@ WHERE name = 'Pro' OR name ILIKE '%pro%';
 ### Step 4: Verify the Update
 
 ```sql
-SELECT id, name, price, base_price_cents, stripe_price_id FROM subscription_plans;
+SELECT id, name, base_price_cents, stripe_price_id FROM subscription_plans;
 ```
 
 You should see:
-- Basic Plan: price=49.00, base_price_cents=4900, stripe_price_id starts with `price_`
-- Pro Plan: price=89.00, base_price_cents=8900, stripe_price_id starts with `price_`
+- Basic Plan: base_price_cents=4900, stripe_price_id starts with `price_`
+- Pro Plan: base_price_cents=8900, stripe_price_id starts with `price_`
 
 ---
 
