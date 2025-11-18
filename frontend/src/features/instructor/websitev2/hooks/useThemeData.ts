@@ -10,14 +10,8 @@ export const useThemeData = () => {
   const filteredThemes = useMemo(() => {
     let filtered = themes;
 
-    // Filter by subscription plan
-    // Show all themes while loading (better UX)
-    // After loading: if Pro, show all themes; if Basic/None, show only professional-coach
-    if (!isLoadingPlan && !isPro) {
-      // Only restrict if we've successfully determined they're not Pro
-      filtered = filtered.filter(theme => theme.id === 'professional-coach');
-    }
-    // If loading or Pro: show all themes
+    // Show all themes to all users regardless of subscription plan
+    // Subscription restrictions are applied at the feature level, not theme selection
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -29,7 +23,7 @@ export const useThemeData = () => {
     }
 
     return filtered;
-  }, [searchQuery, isPro, isLoadingPlan]);
+  }, [searchQuery]);
 
   return {
     themes: filteredThemes,
