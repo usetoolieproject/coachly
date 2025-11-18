@@ -1,7 +1,10 @@
-import { ArrowRight, Play, Sparkles, Calendar, Users, Zap } from 'lucide-react';
+import { ArrowRight, Play, Sparkles, Calendar, Users, Zap, X } from 'lucide-react';
+import { useState } from 'react';
 import heroDashboard from '/hero-dashboard.jpg';
 
 const Hero = () => {
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
   const handleGetStarted = () => {
     const element = document.getElementById('pricing');
     if (element) {
@@ -14,6 +17,14 @@ const Hero = () => {
         behavior: 'smooth'
       });
     }
+  };
+
+  const handleWatchDemo = () => {
+    setShowVideoModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowVideoModal(false);
   };
 
   return (
@@ -45,9 +56,12 @@ const Hero = () => {
                 Get Started
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="bg-white border-2 border-purple-200 text-purple-600 text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:shadow-lg hover:border-purple-300 transition-all duration-300 flex items-center justify-center group">
+              <button 
+                onClick={handleWatchDemo}
+                className="bg-white border-2 border-purple-200 text-purple-600 text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:shadow-lg hover:border-purple-300 transition-all duration-300 flex items-center justify-center group"
+              >
                 <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Watch Demo (30s)
+                Watch Demo (1 min)
               </button>
             </div>
 
@@ -95,6 +109,39 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {showVideoModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
+          onClick={handleCloseModal}
+        >
+          <div 
+            className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 z-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all duration-200"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Video Player */}
+            <div className="relative pt-[56.25%]">
+              <video
+                className="absolute top-0 left-0 w-full h-full"
+                controls
+                autoPlay
+                src="/demo-video.mp4"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
