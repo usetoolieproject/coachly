@@ -1,18 +1,19 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback } from "react";
-import featureAnalytics from '/feature-analytics.jpg';
+import featureCourses from '/feature-courses.png';
 import featureClients from '/feature-clients.jpg';
-import featureVideo from '/feature-video.jpg';
+import featureRecord from '/feature-record.png';
 import featureSecurity from '/feature-security.jpg';
 import featureCalendar from '/feature-calendar.jpg';
 import featurePayments from '/feature-payments.jpg';
+import featureVideo from '/feature-video.jpg';
 
 const features = [
   {
     title: "COURSES",
     description: "Create and deliver online courses with video lessons, assignments, and progress tracking for your students.",
-    image: featureAnalytics,
+    image: featureCourses,
     bgColor: "bg-purple-50",
     link: "#"
   },
@@ -26,7 +27,7 @@ const features = [
   {
     title: "RECORD LESSONS",
     description: "Record and upload video lessons with high-quality playback, transcripts, and interactive elements.",
-    image: featureVideo,
+    image: featureRecord,
     bgColor: "bg-cyan-50",
     link: "#"
   },
