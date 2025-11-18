@@ -6,6 +6,7 @@ import { TenantProvider } from "./contexts/TenantContext";
 import { RootRouteHandler } from "./components/RootRouteHandler";
 import { LoginRouteHandler } from "./components/LoginRouteHandler";
 import { ProtectedRoute, PublicRoute, OfflineIndicator } from "./components/shared";
+import { OAuthCallback } from "./components/auth/OAuthCallback";
 
 // Loading fallback component
 const LoadingFallback = () => (
@@ -69,6 +70,9 @@ function App() {
             {/* Root route with smart logic */}
             <Route path="/" element={<RootRouteHandler />} />
             {/** generic public subdirectory route is defined later to avoid intercepting /signup/* */}
+            
+            {/* OAuth callback route */}
+            <Route path="/auth/callback" element={<OAuthCallback />} />
             
             {/* Smart login route - shows different forms based on domain */}
             <Route

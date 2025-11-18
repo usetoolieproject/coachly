@@ -837,32 +837,10 @@ export const googleCallback = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user.id, user.role);
 
-    // Set session cookie
-    try {
-      const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
-      const proto = String(req.headers['x-forwarded-proto'] || 'http');
-      const hostname = host.split(':')[0];
-      const labels = hostname.split('.');
-      if (labels[0] === 'www') labels.shift();
-      const apex = labels.slice(-2).join('.');
-      const isUsecoachly = apex === 'usecoachly.com';
-      const isProd = process.env.NODE_ENV === 'production' || proto === 'https';
-      
-      const cookieParts = [
-        `session=${token}`,
-        'Path=/',
-        `Max-Age=${7 * 24 * 60 * 60}`,
-        'HttpOnly',
-      ];
-      
-      if (isProd) cookieParts.push('Secure');
-      if (isUsecoachly) cookieParts.push('Domain=.usecoachly.com', 'SameSite=None');
-      
-      res.setHeader('Set-Cookie', cookieParts.join('; '));
-    } catch {}
-
-    // Redirect to dashboard
-    res.redirect(`${frontendUrl}/coach/dashboard`);
+    // Since backend is on different domain (onrender.com), we can't set cookies for usecoachly.com
+    // Instead, pass token in URL and let frontend set the cookie
+    // Redirect to special auth callback page that will set the cookie
+    res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
 
   } catch (error) {
     console.error('Google OAuth error:', error);
