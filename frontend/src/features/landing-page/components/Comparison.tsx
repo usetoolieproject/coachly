@@ -101,8 +101,11 @@ const Comparison = () => {
                 >
                   <div className="flex items-center justify-between gap-4 w-full">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 ${feature.isPro ? 'bg-orange-500' : 'bg-purple-600'}`}>
+                      <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 relative ${feature.isPro ? 'bg-orange-500' : 'bg-purple-600'}`}>
                         <Check className="w-6 h-6 text-white" strokeWidth={3} />
+                        <span className={`absolute -top-1 -right-1 text-[10px] font-bold px-1.5 py-0.5 rounded ${feature.isPro ? 'bg-orange-600 text-white' : 'bg-purple-700 text-white'}`}>
+                          {feature.isPro ? 'Pro' : 'Basic'}
+                        </span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="font-semibold text-base text-gray-900 mb-0.5">{feature.name}</h4>
@@ -112,7 +115,7 @@ const Comparison = () => {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="text-base font-bold text-purple-600">Included</span>
+                      <span className={`text-base font-bold ${feature.isPro ? 'text-orange-600' : 'text-purple-600'}`}>Included</span>
                     </div>
                   </div>
                 </div>
