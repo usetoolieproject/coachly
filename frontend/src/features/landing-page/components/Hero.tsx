@@ -1,6 +1,6 @@
 import { ArrowRight, Play, Sparkles, Calendar, Users, Zap, X } from 'lucide-react';
 import { useState } from 'react';
-import heroDashboard from '/hero-dashboard.jpg';
+import heroDashboard from '/landing-page.png';
 
 const Hero = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
