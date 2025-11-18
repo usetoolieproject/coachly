@@ -134,7 +134,7 @@ const Hero = () => {
                 className="absolute top-0 left-0 w-full h-full"
                 controls
                 autoPlay
-                src="/demo-video.mp4"
+                src="/demo.mp4"
               >
                 Your browser does not support the video tag.
               </video>
