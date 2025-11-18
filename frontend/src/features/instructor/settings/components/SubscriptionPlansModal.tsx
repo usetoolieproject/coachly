@@ -100,7 +100,7 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                 return (
                   <div
                     key={plan.id}
-                    className={`relative bg-white rounded-2xl border-2 p-8 transition-all ${
+                    className={`relative bg-white rounded-2xl border-2 p-8 transition-all flex flex-col ${
                       isPro
                         ? 'border-purple-500 shadow-xl' 
                         : 'border-gray-200 hover:border-purple-300 shadow-lg'
@@ -172,7 +172,7 @@ export const SubscriptionPlansModal: React.FC<SubscriptionPlansModalProps> = ({
                     </div>
 
                     {/* Features */}
-                    <div className="mb-8">
+                    <div className="mb-8 flex-grow">
                       <h4 className="text-sm font-semibold text-gray-900 mb-4">What's included:</h4>
                       <ul className="space-y-3">
                         {plan.features.map((feature, index) => (
