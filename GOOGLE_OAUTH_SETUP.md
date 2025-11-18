@@ -27,7 +27,7 @@ Add these to your backend `.env` file or Render environment variables:
 # Google OAuth Configuration
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_REDIRECT_URI=https://coachly-backend.onrender.com/auth/google/callback
+GOOGLE_REDIRECT_URI=https://coachly-backend.onrender.com/api/auth/google/callback
 
 # Existing variables (make sure these are set)
 FRONTEND_URL=https://usecoachly.com
@@ -53,7 +53,7 @@ API_URL=https://coachly-backend.onrender.com
      - `https://usecoachly.com`
      - `https://coachly-backend.onrender.com`
    - Authorized redirect URIs:
-     - `https://coachly-backend.onrender.com/auth/google/callback`
+     - `https://coachly-backend.onrender.com/api/auth/google/callback`
 7. Copy the Client ID and Client Secret
 
 ## Testing Locally
@@ -63,20 +63,20 @@ For local development, add these to your local `.env`:
 ```env
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_REDIRECT_URI=http://localhost:5001/auth/google/callback
+GOOGLE_REDIRECT_URI=http://localhost:5001/api/auth/google/callback
 FRONTEND_URL=http://localhost:5173
 API_URL=http://localhost:5001
 ```
 
-And add `http://localhost:5001/auth/google/callback` to the authorized redirect URIs in Google Cloud Console.
+And add `http://localhost:5001/api/auth/google/callback` to the authorized redirect URIs in Google Cloud Console.
 
 ## How It Works
 
 1. User clicks "Continue with Google" on the sign-in page
-2. Frontend redirects to: `https://coachly-backend.onrender.com/auth/google`
+2. Frontend redirects to: `https://coachly-backend.onrender.com/api/auth/google`
 3. Backend redirects user to Google's OAuth consent screen
 4. User authorizes the application
-5. Google redirects back to: `https://coachly-backend.onrender.com/auth/google/callback?code=...`
+5. Google redirects back to: `https://coachly-backend.onrender.com/api/auth/google/callback?code=...`
 6. Backend exchanges the code for user information
 7. Backend creates new instructor account if email doesn't exist (or logs in existing user)
 8. Backend sets session cookie and redirects to: `https://usecoachly.com/coach/dashboard`

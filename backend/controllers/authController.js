@@ -721,7 +721,7 @@ export const getInstructors = async (req, res) => {
 // Google OAuth - Initiate authentication
 export const googleAuth = async (req, res) => {
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-  const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/auth/google/callback`;
+  const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/api/auth/google/callback`;
   
   if (!GOOGLE_CLIENT_ID) {
     return res.status(500).json({ error: 'Google OAuth not configured' });
@@ -751,7 +751,7 @@ export const googleCallback = async (req, res) => {
 
     const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
     const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-    const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/auth/google/callback`;
+    const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.API_URL || 'http://localhost:5001'}/api/auth/google/callback`;
 
     // Exchange code for tokens
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {

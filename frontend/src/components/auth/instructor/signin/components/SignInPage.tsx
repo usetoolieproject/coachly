@@ -103,7 +103,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
       <div className="mt-4 sm:mt-6">
         <button
           type="button"
-          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`}
           className="w-full flex items-center justify-center px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" viewBox="0 0 24 24">
