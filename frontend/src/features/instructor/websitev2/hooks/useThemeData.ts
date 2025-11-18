@@ -11,17 +11,13 @@ export const useThemeData = () => {
     let filtered = themes;
 
     // Filter by subscription plan
-    // Pro subscription: show all themes
-    // Basic subscription or no subscription: show only professional-coach theme
-    // While loading: conservatively show only professional-coach to prevent showing unavailable themes
-    // After loading: filter based on actual subscription plan
-    if (isLoadingPlan) {
-      // While loading, show only professional-coach to be safe
-      filtered = filtered.filter(theme => theme.id === 'professional-coach');
-    } else if (!isPro) {
-      // After loading, if not Pro, show only professional-coach
+    // Show all themes while loading (better UX)
+    // After loading: if Pro, show all themes; if Basic/None, show only professional-coach
+    if (!isLoadingPlan && !isPro) {
+      // Only restrict if we've successfully determined they're not Pro
       filtered = filtered.filter(theme => theme.id === 'professional-coach');
     }
+    // If loading or Pro: show all themes
 
     // Filter by search query
     if (searchQuery.trim()) {
