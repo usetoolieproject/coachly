@@ -8,6 +8,7 @@ import featureSecurity from '/feature-security.jpg';
 import featureCalendar from '/feature-calendar.jpg';
 import featurePayments from '/feature-payments.jpg';
 import featureVideo from '/feature-video.jpg';
+import featureMember from '/feature-member.png';
 
 const features = [
   {
@@ -62,7 +63,7 @@ const features = [
   {
     title: "MEMBER MANAGEMENT",
     description: "Track progress, notes, and goals for each client in one organized dashboard.",
-    image: featureClients,
+    image: featureMember,
     bgColor: "bg-orange-50",
     link: "#"
   }
