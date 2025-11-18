@@ -1,5 +1,18 @@
 # Complete Stripe Setup Guide - Step by Step
 
+## ⚠️ IMPORTANT: PRODUCTION/LIVE MODE SETUP
+
+**This guide sets up Stripe in LIVE/PRODUCTION mode - NOT test mode.**
+
+- ✅ All payments will be REAL
+- ✅ All transactions will charge REAL money
+- ✅ All API keys will be LIVE keys (sk_live_...)
+- ✅ Your platform will accept real customer payments immediately after setup
+
+**If you want to test first**: You can set up in test mode (use sk_test_... keys), test everything, then switch to live mode later. However, this guide assumes you're going straight to production.
+
+---
+
 ## Your Pricing Structure
 - **Basic Plan**: $49/month
 - **Pro Plan**: $89/month
@@ -29,11 +42,11 @@
    - **Support contact**: Support email and phone
    - **Branding**: Upload your logo (optional but recommended)
 
-### Step 3: Enable Test Mode (Important!)
+### Step 3: Use Live Mode (Production)
 1. Look at the top left corner - there's a toggle that says "Test mode"
-2. Make sure it's **ON** (should show "Viewing test data")
-3. You'll use test mode until everything is working perfectly
-4. Later you'll switch to "Live mode" when ready for real payments
+2. Make sure it's **OFF** (should show "Viewing live data")
+3. You'll be working in **LIVE MODE** - real payments, real money
+4. ⚠️ **Important**: All actions in this guide will affect real transactions
 
 ---
 
@@ -46,16 +59,20 @@
    - **Publishable key** (starts with `pk_test_...`)
    - **Secret key** (starts with `sk_test_...` - click "Reveal test key")
 
-### Step 2: Copy Your Keys
-1. Click the copy icon next to the Secret key
-2. Save it somewhere safe (you'll need it in Part 4)
-3. Copy the Publishable key too
-4. Save both keys in a text file temporarily
+### Step 2: Copy Your LIVE Keys
+1. **Make sure "Test mode" toggle is OFF** (you should see "Viewing live data")
+2. Click "Reveal live key" next to the Secret key
+3. Click the copy icon to copy it (starts with `sk_live_...`)
+4. Save it somewhere safe (you'll need it in Part 6)
+5. Copy the Publishable key too (starts with `pk_live_...`)
+6. Save both keys in a secure text file temporarily
 
-**IMPORTANT**: 
-- NEVER share your secret key publicly
-- NEVER commit it to GitHub
-- Only use it in environment variables
+**⚠️ CRITICAL SECURITY**: 
+- NEVER share your live secret key publicly
+- NEVER commit it to GitHub or any code repository
+- NEVER send it via email or messaging apps
+- Only use it in environment variables on your server
+- These are REAL keys that can charge REAL money
 
 ---
 
@@ -202,14 +219,19 @@ Click "Select events" and add these:
 4. Add/Update these environment variables:
 
 ```
-STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
-STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
+STRIPE_SECRET_KEY=sk_live_YOUR_LIVE_SECRET_KEY_HERE
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_LIVE_WEBHOOK_SECRET_HERE
 PLATFORM_FEE_CENTS=0
 ```
 
 Replace:
-- `sk_test_YOUR_SECRET_KEY_HERE` with your actual secret key from Part 2
-- `whsec_YOUR_WEBHOOK_SECRET_HERE` with your webhook secret from Part 5
+- `sk_live_YOUR_LIVE_SECRET_KEY_HERE` with your **LIVE** secret key from Part 2 (starts with `sk_live_`)
+- `whsec_YOUR_LIVE_WEBHOOK_SECRET_HERE` with your webhook secret from Part 5
+
+⚠️ **IMPORTANT**: 
+- Use `sk_live_...` NOT `sk_test_...`
+- Double-check you copied the LIVE keys, not test keys
+- These will process REAL payments
 
 5. Click "Save Changes"
 6. Your backend will automatically redeploy (takes ~2 minutes)
@@ -270,41 +292,50 @@ You should see:
 
 ## Part 8: Testing Your Setup (20 minutes)
 
-### Test 1: Instructor Stripe Connect
+⚠️ **IMPORTANT**: You're in LIVE MODE - these will be real payments. Use small amounts or your own card for testing.
+
+### Test 1: Instructor Stripe Connect (REAL DATA REQUIRED)
 
 1. **Log in as an instructor** at https://usecoachly.com
 2. Go to **Settings** (gear icon in sidebar)
 3. Scroll to **Payouts** section
 4. Click **"Set up payouts"**
 5. You'll be redirected to Stripe Connect onboarding
-6. Use **test data**:
-   - Phone: `+1 (800) 555-0100`
-   - Verification code: `000000`
-   - Business name: `Test Instructor Business`
-   - SSN: `000-00-0000` (only in test mode!)
-   - Bank account: Any routing/account numbers
+6. **Use REAL information** (required in live mode):
+   - **Phone**: Your real phone number
+   - **Verification code**: Real code sent to your phone
+   - **Business name**: Your actual business name
+   - **SSN/EIN**: Your real tax ID
+   - **Bank account**: Real routing/account numbers for payouts
+   - **Address**: Real business address
+   - **ID verification**: Upload real ID (driver's license, passport)
 7. Complete the form and submit
 8. You should be redirected back to settings
 9. **Verify**: Payouts section shows "Charges enabled" and "Payouts enabled"
+   - Note: Some features may require additional verification
 
-### Test 2: Platform Subscription (Instructor Signs Up)
+### Test 2: Platform Subscription (REAL PAYMENT)
 
+⚠️ **This will charge a real card $49**
+
+**Option A - Use Your Own Card (Recommended for testing):**
 1. **Open an incognito window**
 2. Go to https://usecoachly.com
 3. Click "Get Started" on the **Basic Plan** ($49)
-4. Complete signup form if not logged in
+4. Complete signup form
 5. You'll be redirected to Stripe Checkout
-6. Use test card:
-   - **Card**: `4242 4242 4242 4242`
-   - **Expiry**: Any future date (e.g., `12/34`)
-   - **CVC**: Any 3 digits (e.g., `123`)
-   - **ZIP**: Any 5 digits (e.g., `12345`)
+6. **Enter your real credit/debit card**
 7. Click "Subscribe"
-8. You should be redirected to instructor dashboard
-9. **Verify in Stripe Dashboard**:
-   - Go to "Payments" → You'll see $49.00 payment
-   - Go to "Customers" → New customer created
-   - Go to "Subscriptions" → Active subscription
+8. ✅ **You will be charged $49** - This is a real payment
+9. You should be redirected to instructor dashboard
+10. **Verify in Stripe Dashboard**:
+    - Go to "Payments" → You'll see $49.00 payment
+    - Go to "Customers" → New customer created
+    - Go to "Subscriptions" → Active subscription
+11. **To cancel/refund**: Go to Stripe Dashboard → Subscriptions → Cancel (and refund if needed)
+
+**Option B - Skip Test Payment (Not Recommended):**
+If you want to skip the real payment test, you can proceed, but you won't know if payments work until a real customer tries.
 
 ### Test 3: Student Payment to Instructor
 
@@ -358,72 +389,80 @@ This will be tested once you have course payment flow. For now, the infrastructu
 
 ---
 
-## Part 10: Going Live (When Ready)
+## Part 10: Final Checklist Before Launch
 
-### Before Going Live Checklist
+### Pre-Launch Verification
 
-- [ ] All tests pass successfully
-- [ ] Stripe account fully verified (business info, bank account)
-- [ ] Privacy policy and Terms of Service URLs added to Stripe
-- [ ] Customer support email/phone confirmed
-- [ ] Tax settings configured (if applicable)
+- [ ] Stripe account fully verified (business info, tax ID, bank account)
+- [ ] Privacy policy URL added to Stripe settings
+- [ ] Terms of Service URL added to Stripe settings
+- [ ] Customer support email/phone confirmed and active
+- [ ] Refund policy documented
+- [ ] Tax settings configured (if applicable for your location)
+- [ ] Payout schedule set (automatic daily/weekly/monthly)
+- [ ] Email templates customized (receipts, invoices)
+- [ ] Test payment completed successfully
+- [ ] Webhook events delivering correctly
+- [ ] Instructor can connect Stripe successfully
 
-### Switch to Live Mode
+### Post-Launch Monitoring (First Week)
 
-1. **Get Live API Keys**:
-   - In Stripe Dashboard, toggle "Test mode" to **OFF**
-   - Go to "Developers" → "API keys"
-   - Copy your **Live** secret key (starts with `sk_live_...`)
+1. **Monitor Stripe Dashboard Daily**:
+   - Check "Payments" for any failures
+   - Review "Disputes" (hopefully none!)
+   - Check "Events" for webhook delivery
 
-2. **Create Live Products**:
-   - Products don't automatically copy from test to live
-   - Go to "Products" (in live mode)
-   - Create Basic Plan ($49/month) again
-   - Create Pro Plan ($89/month) again
-   - Copy the new **live** Price IDs
+2. **Watch for Issues**:
+   - Failed payments (check webhook logs)
+   - Customer complaints about charges
+   - Instructor payout issues
 
-3. **Create Live Webhook**:
-   - Go to "Developers" → "Webhooks" (in live mode)
-   - Add endpoint with same URL and events
-   - Copy the new **live** webhook secret
+3. **Customer Support Ready**:
+   - Have process for refunds
+   - Know how to cancel subscriptions
+   - Can help instructors with Connect issues
 
-4. **Update Backend Environment**:
-   ```
-   STRIPE_SECRET_KEY=sk_live_YOUR_LIVE_KEY
-   STRIPE_WEBHOOK_SECRET=whsec_YOUR_LIVE_WEBHOOK_SECRET
-   ```
+### Important Live Mode Notes
 
-5. **Update Database**:
-   ```sql
-   -- Update with LIVE price IDs
-   UPDATE subscription_plans SET stripe_price_id = 'price_LIVE_BASIC_ID' WHERE name ILIKE '%basic%';
-   UPDATE subscription_plans SET stripe_price_id = 'price_LIVE_PRO_ID' WHERE name ILIKE '%pro%';
-   ```
+✅ **You're already live** - following this guide sets up production
+✅ All payments are real from the start
+✅ Money goes to your Stripe balance immediately
+✅ Instructors receive real payouts
+✅ No "test mode" to graduate from
 
-6. **Test with Small Real Payment**:
-   - Use your own real card
-   - Subscribe to Basic plan ($49)
-   - Verify money arrives in your Stripe balance
-   - Cancel subscription immediately if this is just a test
+### If You Need to Rollback
 
-7. **Announce Launch**: You're live! 🎉
+If something goes wrong and you need to disable payments temporarily:
+
+1. Go to Render dashboard
+2. Set `STRIPE_SECRET_KEY` to an empty value or invalid key
+3. This will show "Payment system not configured" to users
+4. Fix the issue, then restore the real key
 
 ---
 
 ## Summary: What You Created
 
-✅ Stripe account with Connect enabled
-✅ Two subscription products (Basic $49, Pro $89)
-✅ Webhook endpoint for automated updates
-✅ Backend configured with API keys
-✅ Database updated with Price IDs
-✅ Tested full payment flow
+✅ **LIVE** Stripe account with Connect enabled
+✅ Two subscription products (Basic $49, Pro $89) - **LIVE**
+✅ Webhook endpoint for automated updates - **LIVE**
+✅ Backend configured with **LIVE** API keys
+✅ Database updated with **LIVE** Price IDs
+✅ Ready to accept **REAL** payments immediately
 
 ## Timeline
-- **Part 1-3**: 30 minutes (one-time setup)
-- **Part 4-7**: 35 minutes (configuration)
-- **Part 8**: 20 minutes (testing)
-- **Total**: ~90 minutes for complete setup
+- **Part 1-3**: 30 minutes (account setup + verification)
+- **Part 4-7**: 35 minutes (products + configuration)
+- **Part 8**: 20 minutes (testing with real card)
+- **Total**: ~90 minutes for complete LIVE setup
+
+## ⚠️ Important Reminders
+
+- **You're in PRODUCTION** - All payments are real
+- **Test with caution** - Use your own card or small amounts
+- **Monitor closely** - Check Stripe Dashboard daily first week
+- **Customer support ready** - Have refund/cancellation process
+- **Compliance** - Privacy policy, Terms of Service, Tax settings required
 
 ## Support Resources
 
@@ -434,17 +473,20 @@ This will be tested once you have course payment flow. For now, the infrastructu
 
 ## Your Setup Status
 
-- [ ] Part 1: Stripe account created
-- [ ] Part 2: API keys obtained
-- [ ] Part 3: Connect enabled
-- [ ] Part 4: Products created (Basic & Pro)
-- [ ] Part 5: Webhook configured
-- [ ] Part 6: Backend environment variables set
-- [ ] Part 7: Database updated with Price IDs
-- [ ] Part 8: All tests passing
-- [ ] Part 9: Ready for production
-- [ ] Part 10: Live mode (when ready)
+- [ ] Part 1: LIVE Stripe account created & verified
+- [ ] Part 2: LIVE API keys obtained (sk_live_...)
+- [ ] Part 3: LIVE mode confirmed (toggle OFF)
+- [ ] Part 4: LIVE products created (Basic $49 & Pro $89)
+- [ ] Part 5: LIVE webhook configured
+- [ ] Part 6: Backend environment variables set with LIVE keys
+- [ ] Part 7: Database updated with LIVE Price IDs
+- [ ] Part 8: Real payment test completed successfully
+- [ ] Part 9: Troubleshooting guide reviewed
+- [ ] Part 10: Pre-launch checklist completed
+- [ ] **LAUNCH**: Platform accepting real payments! 🚀
 
 ---
 
-**Next Step**: Start with Part 1 and work through each section. Check off items as you complete them. If you get stuck, refer to Part 9 (Troubleshooting).
+**Next Step**: Start with Part 1 and work through each section. Check off items as you complete them. 
+
+⚠️ **Remember**: You're setting up PRODUCTION immediately - all payments will be real from the start!
