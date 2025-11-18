@@ -149,13 +149,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // Check if user has logged out (permanent until they log in again)
     // This persists across page reloads and prevents automatic re-authentication
+    // EXCEPT when we're on a protected route (like /coach/dashboard) which indicates a fresh login
     try {
       const logoutTimestamp = localStorage.getItem('logoutTimestamp');
-      if (logoutTimestamp) {
+      const currentPath = window.location.pathname;
+      const isProtectedRoute = currentPath.startsWith('/coach') || currentPath.startsWith('/admin') || currentPath.startsWith('/student');
+      
+      if (logoutTimestamp && !isProtectedRoute) {
         console.log('🚪 User logged out, staying logged out until explicit login');
         setUser(null);
         setLoading(false);
         return;
+      } else if (logoutTimestamp && isProtectedRoute) {
+        // Clear logout timestamp if we're on a protected route (indicates OAuth or fresh login)
+        console.log('🔓 Clearing logout timestamp for protected route access');
+        localStorage.removeItem('logoutTimestamp');
       }
     } catch (e) {}
   }
