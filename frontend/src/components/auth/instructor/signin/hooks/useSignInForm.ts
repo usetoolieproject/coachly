@@ -27,7 +27,15 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
   const [errors, setErrors] = useState<SignInErrors>({});
   const [isCheckingSubdirectory, setIsCheckingSubdirectory] = useState(false);
   const [subdirectoryChecked, setSubdirectoryChecked] = useState(false);
+  const [promoCodeInfo, setPromoCodeInfo] = useState<{
+    valid: boolean;
+    discountPercent: number;
+    discountAmount: number;
+    message: string;
+  } | null>(null);
+  const [isCheckingPromo, setIsCheckingPromo] = useState(false);
   const debounceRef = useRef<number | null>(null);
+  const promoDebounceRef = useRef<number | null>(null);
 
   const checkSubdirectoryAvailability = async (subdirectory: string) => {
     if (!subdirectory.trim()) return true;
@@ -79,6 +87,63 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
       }
     };
   }, [formData.businessName, mode]);
+
+  // Promo code validation
+  useEffect(() => {
+    if (mode !== 'signup' || !formData.promoCode.trim() || !formData.selectedPlan) {
+      setPromoCodeInfo(null);
+      return;
+    }
+
+    if (promoDebounceRef.current) {
+      clearTimeout(promoDebounceRef.current);
+    }
+
+    promoDebounceRef.current = setTimeout(async () => {
+      setIsCheckingPromo(true);
+      try {
+        const response = await apiFetch('/promo-codes/validate-public', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: formData.promoCode.trim().toUpperCase(),
+            planId: formData.selectedPlan
+          })
+        });
+
+        if (response.valid) {
+          setPromoCodeInfo({
+            valid: true,
+            discountPercent: response.discountPercent || 0,
+            discountAmount: response.discountAmount || 0,
+            message: response.message || `${response.discountPercent}% discount applied!`
+          });
+        } else {
+          setPromoCodeInfo({
+            valid: false,
+            discountPercent: 0,
+            discountAmount: 0,
+            message: response.message || 'Invalid promo code'
+          });
+        }
+      } catch (error: any) {
+        setPromoCodeInfo({
+          valid: false,
+          discountPercent: 0,
+          discountAmount: 0,
+          message: error.message || 'Invalid promo code'
+        });
+      } finally {
+        setIsCheckingPromo(false);
+      }
+    }, 800);
+
+    return () => {
+      if (promoDebounceRef.current) {
+        clearTimeout(promoDebounceRef.current);
+      }
+    };
+  }, [formData.promoCode, formData.selectedPlan, mode]);
 
   const validateForm = () => {
     const newErrors: SignInErrors = {};
@@ -181,16 +246,21 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
 
         // Check if payment should be skipped (100% discount or free duration promo)
         if (response.skipPayment) {
-          // Store token and redirect to subdomain
-          localStorage.setItem('authToken', response.token);
+          // Store token as cookie for authentication
+          if (response.token) {
+            document.cookie = `session=${response.token}; Path=/; Max-Age=${7 * 24 * 60 * 60}; ${window.location.protocol === 'https:' ? 'Secure;' : ''} ${window.location.hostname.includes('usecoachly.com') ? 'Domain=.usecoachly.com; SameSite=None;' : ''}`;
+            localStorage.setItem('token', response.token);
+          }
           
           // Clear pending signup data
           localStorage.removeItem('pendingInstructorSignup');
+          localStorage.removeItem('logoutTimestamp');
+          sessionStorage.removeItem('justLoggedOut');
           
-          const instructorSubdomain = response.instructor?.subdomain || pendingSignupData.subdomain;
+          // Redirect to apex domain dashboard (instructors stay on apex)
           const apex = window.location.hostname.includes('localhost') ? 'localhost:5173' : 'usecoachly.com';
           const protocol = window.location.hostname.includes('localhost') ? 'http' : 'https';
-          const redirectUrl = `${protocol}://${instructorSubdomain}.${apex}/coach/dashboard`;
+          const redirectUrl = `${protocol}://${apex}/coach/dashboard`;
           
           window.location.href = redirectUrl;
           return;
@@ -226,6 +296,8 @@ export const useSignInForm = (initialMode: AuthMode = "login") => {
     errors,
     isCheckingSubdirectory,
     subdirectoryChecked,
+    promoCodeInfo,
+    isCheckingPromo,
     handleSubmit,
   };
 };

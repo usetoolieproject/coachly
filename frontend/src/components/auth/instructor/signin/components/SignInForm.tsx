@@ -20,6 +20,13 @@ interface SignInFormProps {
   plans?: any[];
   plansLoading?: boolean;
   preSelectedPlanId?: string | null;
+  promoCodeInfo?: {
+    valid: boolean;
+    discountPercent: number;
+    discountAmount: number;
+    message: string;
+  } | null;
+  isCheckingPromo?: boolean;
 }
 
 export const SignInForm: React.FC<SignInFormProps> = ({
@@ -36,6 +43,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({
   plans = [],
   plansLoading = false,
   preSelectedPlanId,
+  promoCodeInfo,
+  isCheckingPromo,
 }) => {
   // Get plan info from sessionStorage for instant display, fallback to plans array when loaded
   const planFromStorage = preSelectedPlanId && typeof window !== 'undefined'
@@ -173,14 +182,51 @@ export const SignInForm: React.FC<SignInFormProps> = ({
           />
         </div>
 
-        <FormField
-          label="Promo Code (optional)"
-          name="promoCode"
-          value={formData.promoCode}
-          onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
-          placeholder="Promo Code"
-          showIcon={false}
-        />
+        <div>
+          <FormField
+            label="Promo Code (optional)"
+            name="promoCode"
+            value={formData.promoCode}
+            onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value }))}
+            placeholder="Promo Code"
+            showIcon={false}
+          />
+          {isCheckingPromo && (
+            <p className="text-xs text-gray-500 mt-1">Checking promo code...</p>
+          )}
+          {promoCodeInfo && !isCheckingPromo && (
+            <div className={`mt-2 p-3 rounded-lg flex items-start gap-2 ${
+              promoCodeInfo.valid 
+                ? 'bg-green-50 border border-green-200' 
+                : 'bg-red-50 border border-red-200'
+            }`}>
+              {promoCodeInfo.valid ? (
+                <>
+                  <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-green-800">
+                      {promoCodeInfo.discountPercent === 100 ? '🎉 100% Discount - Free!' : `${promoCodeInfo.discountPercent}% Discount Applied!`}
+                    </p>
+                    {promoCodeInfo.discountAmount > 0 && (
+                      <p className="text-xs text-green-700 mt-0.5">
+                        You save ${promoCodeInfo.discountAmount.toFixed(2)}
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-sm text-red-700">{promoCodeInfo.message}</p>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-start">
           <input

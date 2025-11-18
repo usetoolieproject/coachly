@@ -142,6 +142,92 @@ export const validatePromoCode = async (req, res) => {
   }
 };
 
+// Public version of validatePromoCode for signup flow
+export const validatePromoCodePublic = async (req, res) => {
+  try {
+    const { code, planId } = req.body;
+    
+    if (!code || !code.trim()) {
+      return res.json({ 
+        valid: false, 
+        message: 'Please enter a promo code',
+        discountPercent: 0,
+        discountAmount: 0
+      });
+    }
+    
+    const pc = await promoCodesRepo.getByCode(String(code).trim().toUpperCase());
+    
+    if (!pc || !pc.is_active) {
+      return res.json({ 
+        valid: false, 
+        message: 'Invalid promo code',
+        discountPercent: 0,
+        discountAmount: 0
+      });
+    }
+    
+    if (pc.expires_at && new Date(pc.expires_at) < new Date()) {
+      return res.json({ 
+        valid: false, 
+        message: 'Promo code has expired',
+        discountPercent: 0,
+        discountAmount: 0
+      });
+    }
+    
+    if (pc.max_uses != null && pc.used_count >= pc.max_uses) {
+      return res.json({ 
+        valid: false, 
+        message: 'Promo code usage limit reached',
+        discountPercent: 0,
+        discountAmount: 0
+      });
+    }
+    
+    if (pc.plan_id && planId && pc.plan_id !== planId) {
+      return res.json({ 
+        valid: false, 
+        message: 'Promo code not valid for this plan',
+        discountPercent: 0,
+        discountAmount: 0
+      });
+    }
+    
+    // Get plan price to calculate discount amount
+    let discountAmount = 0;
+    if (planId && pc.discount_percent) {
+      const supabase = getSupabaseClient();
+      const { data: plan } = await supabase
+        .from('subscription_plans')
+        .select('price')
+        .eq('id', planId)
+        .single();
+      
+      if (plan) {
+        discountAmount = (plan.price * pc.discount_percent) / 100;
+      }
+    }
+    
+    res.json({ 
+      valid: true,
+      discountPercent: pc.discount_percent || 0,
+      discountAmount,
+      message: pc.discount_percent === 100 
+        ? '🎉 100% discount! Your subscription is free!' 
+        : `${pc.discount_percent}% discount applied!`
+    });
+  } catch (err) {
+    console.error('Error validating promo code:', err);
+    res.status(500).json({ 
+      valid: false,
+      message: 'Error validating promo code',
+      discountPercent: 0,
+      discountAmount: 0
+    });
+  }
+};
+
 export const redeemPromoCode = async (req, res) => {
   try {
     console.log('🎟️ Redeem promo code request:', { user: req.user?.email, body: req.body });

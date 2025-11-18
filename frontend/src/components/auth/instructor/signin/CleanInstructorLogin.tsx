@@ -45,6 +45,8 @@ export default function CleanInstructorLogin() {
     errors,
     isCheckingSubdirectory,
     subdirectoryChecked,
+    promoCodeInfo,
+    isCheckingPromo,
     handleSubmit,
   } = useSignInForm(initialMode);
 
@@ -135,14 +137,24 @@ export default function CleanInstructorLogin() {
                 plans={plans}
                 plansLoading={plansLoading}
                 preSelectedPlanId={selectedPlanId}
+                promoCodeInfo={promoCodeInfo}
+                isCheckingPromo={isCheckingPromo}
               />
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`w-full text-white py-2.5 sm:py-3 px-4 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  promoCodeInfo?.valid && promoCodeInfo.discountPercent === 100
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
-                {isLoading ? "Processing..." : "Continue to Payment"}
+                {isLoading
+                  ? "Processing..."
+                  : promoCodeInfo?.valid && promoCodeInfo.discountPercent === 100
+                  ? "Create Account"
+                  : "Continue to Payment"}
               </button>
 
               <p className="mt-4 text-xs sm:text-sm text-gray-600 text-center">

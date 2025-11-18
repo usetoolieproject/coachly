@@ -142,6 +142,7 @@ import {
   updatePromoCode,
   deletePromoCode,
   validatePromoCode,
+  validatePromoCodePublic,
   redeemPromoCode,
   getMyPromo,
   removeMyPromo,
@@ -225,6 +226,9 @@ router.get('/auth/google/callback', googleCallback);
 router.post('/auth/forgot-password', authLimiter, requestPasswordReset);
 router.post('/auth/reset-password', authLimiter, resetPassword);
 console.log('✅ Password reset routes registered');
+
+// Public promo code validation (for signup)
+router.post('/promo-codes/validate-public', validatePromoCodePublic);
 
 router.get('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, getCourses);
 router.post('/courses', authenticateToken, requireRole(['instructor']), checkInstructorPremium, createCourse);
